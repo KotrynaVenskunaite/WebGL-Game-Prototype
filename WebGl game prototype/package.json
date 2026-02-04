@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "async": "^3.2.6",
+    "gl-matrix": "^3.4.4"
+  }
+}

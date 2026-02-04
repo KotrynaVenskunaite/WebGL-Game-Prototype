@@ -1,0 +1,198 @@
+
+
+.container {
+    background-color: black;
+    position: relative;
+    width: 800px;
+    height: 800px;
+}
+
+#game_surface {
+    display: block;
+}
+
+#UI {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10%;
+}
+
+#dither_image {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    overflow:auto;
+
+    width: 30%;
+    bottom: 50%;
+    left: 70%;
+    transform: translateX(-50%);
+}
+
+#interact_text{
+    color: #ffffff;
+    text-align: center;
+    font-size: 16px;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke:3px black;
+    paint-order: stroke fill;
+}
+
+
+
+#dialogue_box {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    width: 80%;
+    height: 30%;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-color: rgba(162, 22, 22, 0);
+
+    padding: 3%;
+    gap: 4%; /
+}
+
+
+#dialog_text {
+    flex: 0 0 85%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    background-color: black;
+    border: 4px solid white;
+
+    padding: 1% 0;
+
+    color: white;
+    font-size: clamp(0.9em, 1.5vw, 1.4em);
+    line-height: 1.3;
+}
+
+
+#dialog_buttons {
+    flex: 0 0 35%;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    gap: 1.0rem;
+
+    border-left: 4px solid white;
+    padding: 2%;
+
+    align-items: stretch;
+}
+
+#dialog_buttons button {
+    width: 100%;
+    height: 100%;
+
+    display: none;
+    align-items: center;
+    justify-content: center; 
+
+    text-align: center;
+
+    background: black;
+    color: white;
+    border: 2px solid white;
+
+    font-family: monospace;
+    font-size: clamp(1rem, 1.0vw, 3rem);
+    cursor: pointer;
+
+}
+
+#dialog_buttons button:hover {
+    background-color: rgb(76, 76, 76);
+}
+
+
+
+#dialog_name {
+    flex: 0 0 15%;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0.4% 0.8%;
+
+    font-family: monospace;
+
+    background-color: black;
+    border: 4px solid white;
+
+    color: white;
+    font-size: clamp(1rem, 1.5vw, 3rem);
+
+    width: fit-content;
+    max-width: 60%;
+}
+
+
+#dialog_text_text {
+    flex: 1 1 0;
+    padding: 0 5%;
+    overflow-y: auto;
+
+    font-family: monospace;
+    font-size: clamp(0.9em, 2.0vw, 1.4em);
+}
+
+
+
+/* IRIS */
+
+@property --iris-radius {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
+
+@property --iris-gradient-length {
+    syntax: "<length> | <percentage>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+.iris {
+    --iris-radius: 100%;
+    --iris-gradient-length: 60px;
+    --time: 1000ms;
+
+    -webkit-mask-image: radial-gradient(
+      black,
+      black var(--iris-radius),
+      transparent calc(var(--iris-radius) + var(--iris-gradient-length)),
+      transparent
+    );
+    transition: --iris-radius var(--time) cubic-bezier(0, 0.55, 0.45, 1),
+                --iris-gradient-length var(--time) ease-out;
+}
+
+.iris.start {
+    --iris-radius: -50%;
+    --iris-gradient-length: 0px;
+}

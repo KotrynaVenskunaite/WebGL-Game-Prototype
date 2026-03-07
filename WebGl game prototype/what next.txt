@@ -1,0 +1,20 @@
+        gl.uniformMatrix4fv(
+            this.NormalProgram.uniforms.matrixNormal,
+            gl.FALSE,
+            this.NormalMeshes[i].world
+        );
+
+        gl.uniformMatrix4fv(
+            this.NormalProgram.uniforms.matrixModelViewProjection,
+            gl.FALSE,
+            this.NormalMeshes[i].world
+        );
+
+        gl.uniformMatrix4fv(
+            this.NormalProgram.uniforms.matrixModelView,
+            gl.FALSE,
+            this.NormalMeshes[i].world
+        );
+
+
+        Calclate these values (3)

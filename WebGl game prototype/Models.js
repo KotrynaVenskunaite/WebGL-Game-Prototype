@@ -1,10 +1,11 @@
 'use strict';
 
-var Model = function (gl, vertices, indices, normals, textCoords, texture, color, name) {
+var Model = function (gl, vertices, indices, normals, textCoords, tangents, texture, color, name) {
 	this.vbo = gl.createBuffer();
 	this.ibo = gl.createBuffer();
 	this.nbo = gl.createBuffer();
     this.tbo = gl.createBuffer();
+    this.tanbo = null;
 	this.nPoints = indices.length;
 
 	this.world = glMatrix.mat4.create();
@@ -25,6 +26,15 @@ var Model = function (gl, vertices, indices, normals, textCoords, texture, color
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.tbo);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textCoords), gl.STATIC_DRAW);
+
+    if (tangents != null) {
+        this.tanbo = gl.createBuffer();
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.tanbo);
+        gl.bufferData(gl.ARRAY_BUFFER, tangents, gl.STATIC_DRAW);
+    }
+    //generateTangents already returns Float32Array, so no need to wrap it again
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(tangents), gl.STATIC_DRAW);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, null);
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);

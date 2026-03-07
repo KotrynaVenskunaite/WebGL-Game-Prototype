@@ -751,11 +751,17 @@ DemoScene.prototype.Load = function (cb){
 
         };
         me.DitherProgram.uniforms = {
+            // model: me.gl.getUniformLocation(me.DitherProgram, 'model'),
+            // view: me.gl.getUniformLocation(me.DitherProgram, 'view'),
+            // projection: me.gl.getUniformLocation(me.DitherProgram, 'projection'),
            
             
             mWorld: me.gl.getUniformLocation(me.DitherProgram, 'mWorld'),
             mView: me.gl.getUniformLocation(me.DitherProgram, 'mView'),
             mProj: me.gl.getUniformLocation(me.DitherProgram, 'mProj'),
+
+
+            // map: me.gl.getUniformLocation(me.DitherProgram, 'map'),
 
             ditheringEnabled: me.gl.getUniformLocation(me.DitherProgram, 'ditheringEnabled'),
             gridSize: me.gl.getUniformLocation(me.DitherProgram, 'gridSize'),
@@ -778,11 +784,10 @@ DemoScene.prototype.Load = function (cb){
             materialShininess: me.gl.getUniformLocation(me.DitherProgram, 'materialShininess'),
             map0: me.gl.getUniformLocation(me.NormalProgram, 'map0'),
             map1: me.gl.getUniformLocation(me.NormalProgram, 'map1'),
-
+            // matrices used by normal‑map shader
             matrixNormal: me.gl.getUniformLocation(me.NormalProgram, 'matrixNormal'),
             matrixModelView: me.gl.getUniformLocation(me.NormalProgram, 'matrixModelView'),
             matrixModelViewProjection: me.gl.getUniformLocation(me.NormalProgram, 'matrixModelViewProjection')
-            
         };
 
         me.NormalProgram.attribs = {
@@ -897,9 +902,8 @@ DemoScene.prototype.Begin = function (){
 
         me._Outlines();
         me._Render();
-        me._NormalMap();
         me._Dither();
-        
+        me._NormalMap();
 
         me.nextFrameHandle = requestAnimationFrame(loop);
     };
@@ -1248,13 +1252,13 @@ DemoScene.prototype._Dither = function () {
 DemoScene.prototype._NormalMap = function (){
     var gl = this.gl;
 
-    // Clear back buffer, set per-frame uniforms
+    // don't clear here - previous passes already set up the frame
+    // gl.enable(gl.CULL_FACE);
+    // gl.enable(gl.DEPTH_TEST);
+    // (clear happens once at the start of the frame in _Outlines)
+
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
-    // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-    // gl.clearColor(0.0, 0.0, 0.0, 1); //Background color
-    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
 
     gl.useProgram(this.NormalProgram);
     gl.uniform4fv(this.NormalProgram.uniforms.lightColor,[1.0, 1.0, 1.0, 1.0]);
@@ -1265,50 +1269,36 @@ DemoScene.prototype._NormalMap = function (){
     gl.uniform4fv(this.NormalProgram.uniforms.materialSpecular,[1.0, 1.0, 1.0, 1.0]);
     gl.uniform1f(this.NormalProgram.uniforms.materialShininess,32.0);
 
+    // base/diffuse texture on unit 0, normal map on unit 1
     gl.uniform1i(this.NormalProgram.uniforms.map0, 0);
     gl.uniform1i(this.NormalProgram.uniforms.map1, 1);
 
-    // Draw meshes
-
+    // Draw each normal‑mapped mesh
     for (var i = 0; i < this.NormalMeshes.length; i++){
+        // compute matrix uniforms
+        var mv = glMatrix.mat4.create();
+        glMatrix.mat4.multiply(mv, this.viewMatrix, this.NormalMeshes[i].world);
+        var mvp = glMatrix.mat4.create();
+        glMatrix.mat4.multiply(mvp, this.projMatrix, mv);
+        var normalMat = glMatrix.mat4.create();
+        glMatrix.mat4.invert(normalMat, mv);
+        glMatrix.mat4.transpose(normalMat, normalMat);
 
-        //Set Texture for each model
-        gl.activeTexture(gl.TEXTURE1);
+        gl.uniformMatrix4fv(this.NormalProgram.uniforms.matrixModelView, gl.FALSE, mv);
+        gl.uniformMatrix4fv(this.NormalProgram.uniforms.matrixModelViewProjection, gl.FALSE, mvp);
+        gl.uniformMatrix4fv(this.NormalProgram.uniforms.matrixNormal, gl.FALSE, normalMat);
+
+        // diffuse texture
+        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.NormalMeshes[i].texture);
-        gl.uniform1i(this.DitherProgram.uniforms.map0, 0);
+        gl.uniform1i(this.NormalProgram.uniforms.map0, 0);
 
-
-        // Set normal texture
-        gl.uniform1i(this.DitherProgram.uniforms.map1, 1);
-        gl.activeTexture(gl.TEXTURE2);
+        // normal map
+        gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.Normal_Texture);
+        gl.uniform1i(this.NormalProgram.uniforms.map1, 1);
 
-        // Per object uniforms
-        // gl.uniform4fv(
-        //     this.NormalProgram.uniforms.meshColor,
-        //     this.NormalMeshes[i].color
-        // );
-
-        gl.uniformMatrix4fv(
-            this.NormalProgram.uniforms.matrixNormal,
-            gl.FALSE,
-            this.NormalMeshes[i].world
-        );
-
-        gl.uniformMatrix4fv(
-            this.NormalProgram.uniforms.matrixModelViewProjection,
-            gl.FALSE,
-            this.NormalMeshes[i].world
-        );
-
-        gl.uniformMatrix4fv(
-            this.NormalProgram.uniforms.matrixModelView,
-            gl.FALSE,
-            this.NormalMeshes[i].world
-        );
-        
-
-        // Set Atribs
+        // attribute setup
         gl.bindBuffer(gl.ARRAY_BUFFER, this.NormalMeshes[i].vbo);
         gl.vertexAttribPointer(
             this.NormalProgram.attribs.vertexPosition,
@@ -1327,33 +1317,26 @@ DemoScene.prototype._NormalMap = function (){
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.NormalMeshes[i].tbo);
         gl.vertexAttribPointer(
-            this.NormalProgram.attribs.vertexTexCoord0, //Attribute location
-            2, //Number of elements per attribute (vecX) color
-            gl.FLOAT, //Type of elements
-            gl.FALSE, //Is data normalised
-            2 * Float32Array.BYTES_PER_ELEMENT,//Size of an individual vertex
-            0 //Offset from the beginning of a single vertex to tris attribute
+            this.NormalProgram.attribs.vertexTexCoord0,
+            2, gl.FLOAT, gl.FALSE,
+            2 * Float32Array.BYTES_PER_ELEMENT,
+            0
         );
         gl.enableVertexAttribArray(this.NormalProgram.attribs.vertexTexCoord0);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.NormalMeshes[i].tanbo);
         gl.vertexAttribPointer(
-            this.NormalProgram.attribs.vertexTangent, //Attribute location
+            this.NormalProgram.attribs.vertexTangent,
             3, gl.FLOAT, gl.FALSE,
             0, 0
         );
         gl.enableVertexAttribArray(this.NormalProgram.attribs.vertexTangent);
-
 
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.NormalMeshes[i].ibo);
         gl.drawElements(gl.TRIANGLES, this.NormalMeshes[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
     }
-
-    // console.log(gl.getShaderInfoLog(vertexShader));
-    // console.log(gl.getShaderInfoLog(fragmentShader));
-    // console.log(gl.getProgramInfoLog(program));
 }
 
 //

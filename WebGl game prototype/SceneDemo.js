@@ -38,7 +38,7 @@ DemoScene.prototype.Load = function (cb){
             async.map({
                 'Vinny_Texture': 'textures/Vinny_Texture.png',
                 'Cube_Texture': 'textures/grid512.png',
-                'Normal_Texture': 'textures/grid512_normals.png',
+                'Normal_Texture': 'textures/test.png',
             }, loadImage, callback);
         }
     }, function(LoadErrors, LoadResults){
@@ -128,13 +128,12 @@ DemoScene.prototype.Load = function (cb){
         );
 
 
-        // Modification must be in order of: scale, totate , translate
+        // Modification must be in order of: scale, rotate , translate
         glMatrix.mat4.scale(
             me.BallMesh.world,         
             me.BallMesh.world,         
             glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
         );
-
         glMatrix.mat4.translate(
             me.BallMesh.world, me.BallMesh.world,
             glMatrix.vec4.fromValues(0, 44, 4)
@@ -169,7 +168,11 @@ DemoScene.prototype.Load = function (cb){
             me.BoxMesh.world,         
             glMatrix.vec3.fromValues(0.3, 0.3, 0.3) // scale X/Y/Z
         );
-
+         glMatrix.mat4.rotate(
+            me.BoxMesh.world, me.BoxMesh.world,
+            glMatrix.glMatrix.toRadian(90),
+            glMatrix.vec3.fromValues(-1, 0, 0)
+        );
         glMatrix.mat4.translate(
             me.BoxMesh.world, me.BoxMesh.world,
             glMatrix.vec4.fromValues(0, 0, 0)
@@ -775,7 +778,7 @@ DemoScene.prototype.Load = function (cb){
             materialAmbient: me.gl.getUniformLocation(me.NormalProgram, 'materialAmbient'),
             materialDiffuse: me.gl.getUniformLocation(me.NormalProgram, 'materialDiffuse'),
             materialSpecular: me.gl.getUniformLocation(me.NormalProgram, 'materialSpecular'),
-            materialShininess: me.gl.getUniformLocation(me.DitherProgram, 'materialShininess'),
+            materialShininess: me.gl.getUniformLocation(me.NormalProgram, 'materialShininess'),
             map0: me.gl.getUniformLocation(me.NormalProgram, 'map0'),
             map1: me.gl.getUniformLocation(me.NormalProgram, 'map1'),
 
@@ -1251,6 +1254,7 @@ DemoScene.prototype._NormalMap = function (){
     // Clear back buffer, set per-frame uniforms
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
+    // gl.clear(gl.DEPTH_BUFFER_BIT);
     // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
     // gl.clearColor(0.0, 0.0, 0.0, 1); //Background color
     // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -1258,12 +1262,12 @@ DemoScene.prototype._NormalMap = function (){
 
     gl.useProgram(this.NormalProgram);
     gl.uniform4fv(this.NormalProgram.uniforms.lightColor,[1.0, 1.0, 1.0, 1.0]);
-    gl.uniform4fv(this.NormalProgram.uniforms.lightPosition,[3.0, 5.0, 2.0, 1.0]);
+    gl.uniform4fv(this.NormalProgram.uniforms.lightPosition,[0.0, 0.0, 0.0, 1.0]);
     gl.uniform3fv(this.NormalProgram.uniforms.lightAttenuations,[1.0, 0.09, 0.032]);
     gl.uniform4fv(this.NormalProgram.uniforms.materialAmbient,[0.2, 0.2, 0.2, 1.0]);
     gl.uniform4fv(this.NormalProgram.uniforms.materialDiffuse,[1.0, 1.0, 1.0, 1.0]);
     gl.uniform4fv(this.NormalProgram.uniforms.materialSpecular,[1.0, 1.0, 1.0, 1.0]);
-    gl.uniform1f(this.NormalProgram.uniforms.materialShininess,32.0);
+    gl.uniform1f(this.NormalProgram.uniforms.materialShininess, 32.0);
 
     gl.uniform1i(this.NormalProgram.uniforms.map0, 0);
     gl.uniform1i(this.NormalProgram.uniforms.map1, 1);
@@ -1273,14 +1277,14 @@ DemoScene.prototype._NormalMap = function (){
     for (var i = 0; i < this.NormalMeshes.length; i++){
 
         //Set Texture for each model
-        gl.activeTexture(gl.TEXTURE1);
+        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.NormalMeshes[i].texture);
-        gl.uniform1i(this.DitherProgram.uniforms.map0, 0);
+        // gl.uniform1i(this.DitherProgram.uniforms.map0, 0);
 
 
         // Set normal texture
-        gl.uniform1i(this.DitherProgram.uniforms.map1, 1);
-        gl.activeTexture(gl.TEXTURE2);
+        // gl.uniform1i(this.DitherProgram.uniforms.map1, 1);
+        gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.Normal_Texture);
 
         // Per object uniforms
@@ -1289,23 +1293,17 @@ DemoScene.prototype._NormalMap = function (){
         //     this.NormalMeshes[i].color
         // );
 
-        gl.uniformMatrix4fv(
-            this.NormalProgram.uniforms.matrixNormal,
-            gl.FALSE,
-            this.NormalMeshes[i].world
-        );
+        var mv = glMatrix.mat4.create();
+        glMatrix.mat4.multiply(mv, this.viewMatrix, this.NormalMeshes[i].world);
+        var mvp = glMatrix.mat4.create();
+        glMatrix.mat4.multiply(mvp, this.projMatrix, mv);
+        var normalMat = glMatrix.mat4.create();
+        glMatrix.mat4.invert(normalMat, mv);
+        glMatrix.mat4.transpose(normalMat, normalMat);
 
-        gl.uniformMatrix4fv(
-            this.NormalProgram.uniforms.matrixModelViewProjection,
-            gl.FALSE,
-            this.NormalMeshes[i].world
-        );
-
-        gl.uniformMatrix4fv(
-            this.NormalProgram.uniforms.matrixModelView,
-            gl.FALSE,
-            this.NormalMeshes[i].world
-        );
+        gl.uniformMatrix4fv(this.NormalProgram.uniforms.matrixModelView, gl.FALSE, mv);
+        gl.uniformMatrix4fv(this.NormalProgram.uniforms.matrixModelViewProjection, gl.FALSE, mvp);
+        gl.uniformMatrix4fv(this.NormalProgram.uniforms.matrixNormal, gl.FALSE, normalMat);
         
 
         // Set Atribs
@@ -1350,10 +1348,6 @@ DemoScene.prototype._NormalMap = function (){
         gl.drawElements(gl.TRIANGLES, this.NormalMeshes[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
     }
-
-    // console.log(gl.getShaderInfoLog(vertexShader));
-    // console.log(gl.getShaderInfoLog(fragmentShader));
-    // console.log(gl.getProgramInfoLog(program));
 }
 
 //
@@ -1560,4 +1554,19 @@ DemoScene.prototype.Set_Dither_Shader_Variabled = function(dither, grid, ratio, 
     if(quantize !== undefined)      {this.quantize_value = quantize;}
     if(thresh_val !== undefined)    {this.threshold = thresh_val;}
     if(lot_val !== undefined)       {this.lit = lot_val;}
+}
+
+DemoScene.prototype.Set_Image_as_Normal = function(){
+    var gl = this.gl;
+    gl.bindTexture(gl.TEXTURE_2D, this.Normal_Texture);
+
+    gl.texImage2D(
+        gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+        gl.UNSIGNED_BYTE,
+        canvas
+    );
+    
+    // gl.bindTexture(gl.TEXTURE_2D, null);
+
+    console.log("executed");
 }

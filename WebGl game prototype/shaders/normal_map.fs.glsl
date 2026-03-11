@@ -66,7 +66,9 @@ void main(void) {
 
   // get normal in tangent space from normal map,
   // then set the range from [0, 1] to [-1, 1]
-  vec3 tsNormal = normalize(texture2D(map1, texCoord0).rgb * 2.0 - ONE);
+  vec3 tsNormal = texture2D(map1, texCoord0).rgb * 2.0 - 1.0;
+  tsNormal.xy *= 1.0;
+  tsNormal = normalize(tsNormal);
 
   // compute reflected ray vector: 2 * (N dot L) * N - L
   vec3 tsReflect = reflect(-tsLight, tsNormal);

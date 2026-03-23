@@ -106,9 +106,15 @@ function Begin_Dialogue(name){
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
         }
+        else if (name == "Vinny_2" && dialogue_progression == "Normal_Map_end"){
+            d_text = "I hope you enjoyed this little lesson!"
+            button_1.innerHTML = "I did!"
+            button_2.innerHTML = "I did not"
+        }
         else if(language == "eng" && name == "Vincent")
         {
             d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding."
+            dialogue_progression = 0;
         }
         // else if(name == "Vinny_2" && dialogue_progression != "dither_end")
         // {
@@ -520,7 +526,7 @@ function vinny_dialogue_progression(buttonNumber){
             showDrawingArea();
             Demo.changeNormalShaderRenderResult(0);
             d_text = "It is unconventional, however, you CAN draw it yourself. Give it a try!";
-            button_1.innerHTML = "How doe it work?";
+            button_1.innerHTML = "How does it work?";
             type_letters(d_text, true, false, false, false);
             dialogue_progression = "Normal_Map_9";
             break;

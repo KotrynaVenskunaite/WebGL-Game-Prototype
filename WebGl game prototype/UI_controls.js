@@ -18,12 +18,16 @@ button_2.addEventListener("click", () => vinny_dialogue_progression(2));
 button_3.addEventListener("click", () => vinny_dialogue_progression(3));
 button_4.addEventListener("click", () => vinny_dialogue_progression(4));
 
+document.addEventListener('click', cancelDialogue);
+
 var img = document.createElement("img");
 
 var d_text = 'Placeholder text';
 var language = "eng"
 var dialogue_progression = 0;
 var is_in_dialogue = false
+var did_skip_dialogue = false;
+var can_skip_dialogue = false;
 
 
 img.src = 'textures/f_key.png';
@@ -33,10 +37,16 @@ img.style.opacity = "0.8";
 
 function InitiateConversation(name, can_start_convo, is_starting) {
 
-    if (name == "Book" || name == "Bench" || name == "Vinny"){
+    // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
+    //     return;
+    // }
+    if (name != "Vinny_2" && name != "Vincent"){
         return;
     }
+    // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);
+    
     if (can_start_convo == 1 && is_in_dialogue == false){
+       
         if (language == "eng"){
             TalkTo.innerHTML = "TALK TO<br>" + name;
         }
@@ -57,8 +67,6 @@ function InitiateConversation(name, can_start_convo, is_starting) {
         TalkTo.textContent = ""
     }
     
-
-    // 
 }
 
 function Begin_Dialogue(name){
@@ -93,24 +101,37 @@ function Begin_Dialogue(name){
 
     
     setTimeout(() => {
-        if (dialogue_progression == "dither_end"){
+        if (name == "Vincent" && dialogue_progression == "dither_end"){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
         }
-        else if(language == "eng")
+        else if(language == "eng" && name == "Vincent")
         {
             d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding."
         }
-        else{
+        // else if(name == "Vinny_2" && dialogue_progression != "dither_end")
+        // {
+        //     d_text = "I have something important to share, but I'm afraid you will have to talk to someone lese first.";
+        //     button_1.innerHTML = "OK"
+        //     button_2.innerHTML = "See ya!"
+        // }
+        else if(name == "Vinny_2")
+        {
+            d_text = "I look quite plain today, don't I?";
+            button_1.innerHTML = "You do"
+            button_2.innerHTML = "You look nice!"
+            dialogue_progression = "Normal_Map_Start"
+        }
+        else if (name == "Vincent"){
             d_text = "Sveikas! Aš kaip tik skaičiau apie technikas naudojamas spalvų juostavimuisi sutvarkyti."
         }
         type_letters(d_text, true, true, false, false);
     }, 3000);
     
-    button_1.onclick = () => {
-        console.log("hi");
-    };
+    // button_1.onclick = () => {
+    //     console.log("hi");
+    // };
     // button_2.onclick = vinny_dialogue_progression();
     
 }
@@ -147,23 +168,55 @@ function End_Dialogue(){
 }
 
 function type_letters(text, b1, b2, b3, b4){
+    
     dialogue.textContent = "";
     button_1.style.display = "none";
     button_2.style.display = "none";
     button_3.style.display = "none";
     button_4.style.display = "none";
-
-    for (let i = 0; i < text.length; i++) {
-        setTimeout(() => {
-            dialogue.textContent  += text[i];
-        }, i * 50);
-    }
     setTimeout(() => {
-        button_1.style.display = b1 ? "flex" : "none";
-        button_2.style.display = b2 ? "flex" : "none";
-        button_3.style.display = b3 ? "flex" : "none";
-        button_4.style.display = b4 ? "flex" : "none";
-    }, text.length * 50); // runs after last letter
+        can_skip_dialogue = true;
+        console.log("CAN SKIP NOW");
+    },500); //skip timer
+    var typingIndex = 0;
+
+    function TypeNextLetter(){
+        
+        if(did_skip_dialogue == true){
+            console.log(did_skip_dialogue);
+            can_skip_dialogue = false;
+            did_skip_dialogue = false;
+            dialogue.textContent = text;
+            show_buttons(b1, b2, b3, b4);
+            
+            return;
+        }
+
+        if(typingIndex < text.length){
+            dialogue.textContent += text[typingIndex];
+            typingIndex +=1;
+            this.letterTimer = setTimeout(TypeNextLetter, 50);
+        }else{
+            show_buttons(b1, b2, b3, b4);
+        }
+    }
+    TypeNextLetter();
+}
+
+function show_buttons(b1, b2, b3, b4){
+    button_1.style.display = b1 ? "flex" : "none";
+    button_2.style.display = b2 ? "flex" : "none";
+    button_3.style.display = b3 ? "flex" : "none";
+    button_4.style.display = b4 ? "flex" : "none";
+}
+
+function cancelDialogue(){
+    if (can_skip_dialogue == true && is_in_dialogue == true){
+        did_skip_dialogue = true;
+        console.log("set to true");
+        // clearTimeout(this.letterTimer);
+    }
+    
 }
 
 function vinny_dialogue_progression(buttonNumber){
@@ -370,6 +423,131 @@ function vinny_dialogue_progression(buttonNumber){
             type_letters(d_text, false, false, false, false);
             End_Dialogue();
             break;
+        case "Normal_Map_Start":
+            d_text = "Oh, I don't mean my outfit. I meant my...planes! My features might look pointy, but I actually only have 2912 vertices.";
+            button_1.innerHTML = "ONLY 2912!?";//14319
+            button_2.innerHTML = "Indeed, quite low";
+            button_3.innerHTML = "I don't get it";
+            type_letters(d_text, true, true, true, false);
+            dialogue_progression = "Normal_Map_1";
+            break;
+        case "Normal_Map_1":
+            d_text = "I am joking, that is quite a huge number for a web game NPC. It comes down to my boots and glasses, they are quite unoptimised...";
+            button_1.innerHTML = "Unoptimised?";
+            button_2.innerHTML = "What is a vertice?";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "Normal_Map_2";
+            break;
+        case "Normal_Map_2":
+            if(buttonNumber == 1){
+                Demo.Dialogue_Meshes_rescale(0);
+                d_text = "Have you ever thought about how games have very detailed surfaces and items, yet still run well in your machine?";
+                button_1.innerHTML = "Yes, I wonder how";
+                button_2.innerHTML = "Never thought of it";
+                button_3.innerHTML = "I never noticed that";
+                button_4.innerHTML = "I have a clue";
+                type_letters(d_text, true, true, true, true);
+                dialogue_progression = "Normal_Map_3";
+            }
+            if(buttonNumber == 2){
+                Demo.Dialogue_Meshes_rescale(4);
+                d_text = "A vertex is a point in 3D space where 2 or more edges meet. They form the corners of 3D models.";
+                button_1.innerHTML = "Understood";
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "Normal_Map_2";
+            }
+            break;
+        case "Normal_Map_3":
+            Demo.Dialogue_Meshes_rescale(4);
+            d_text = "That is done with the help of bump or normal maps. They are textures, that determine how the light reflects on an object.";
+            button_1.innerHTML = "Can you demonstrate?";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_5";
+            break;
+        case "Normal_Map_5":
+            Demo.Dialogue_Meshes_rescale(2);
+            Demo.Dialogue_Meshes_rescale(20);
+            d_text = "Sure, look at this cube. It's just a cube, but you can clearly see the indents around the numbers";
+            button_1.innerHTML = "How does that work?";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_6";
+            break;
+        case "Normal_Map_6":
+            d_text = "We can use the RGB values of a texture to configure what direction the 'normals' should look towards.";
+            button_1.innerHTML = "What are normals?";
+            button_2.innerHTML = "How does the texture look like?";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "Normal_Map_7";
+            break;
+        case "Normal_Map_7":
+            if(buttonNumber == 1){
+                Demo.Dialogue_Meshes_rescale(4);
+                d_text = "To simplify, a normal is the direction a plane is facing. The direction is determined by the verices in 3d space.";
+                button_1.innerHTML = "->";
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "Normal_Map_7_2";
+            }
+            if(buttonNumber == 2){
+                Demo.Dialogue_Meshes_rescale(2);
+                Demo.changeNormalShaderRenderResult(1);
+                d_text = "This is what it looks like. The blue color chanel represents the Z axis. We barely change it, so the texture always has a blue/purplue hue.";
+                button_1.innerHTML = "Can I change it?";
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "Normal_Map_8";
+            }
+            break;
+        case "Normal_Map_7_2":
+            d_text = "Those verices have each individual 'normal' information, that can be interpolated between them.";
+            button_1.innerHTML = "->";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_7_3";
+            break;
+        case "Normal_Map_7_3":
+            d_text = "That is how they form a flat plane. However, those interpolated points can be manipulated to achieve different lighting or other results.";
+            button_1.innerHTML = "->";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_7_4";
+            break;
+        case "Normal_Map_7_4":
+            d_text = "We use normal maps to achieve exactly that.";
+            button_1.innerHTML = "Can you repeat?";
+            button_2.innerHTML = "What do they look like?";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "Normal_Map_7";
+            break;
+        case "Normal_Map_8":
+            Demo.Dialogue_Meshes_rescale(0);
+            showDrawingArea();
+            Demo.changeNormalShaderRenderResult(0);
+            d_text = "It is unconventional, however, you CAN draw it yourself. Give it a try!";
+            button_1.innerHTML = "How doe it work?";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_9";
+            break;
+        case "Normal_Map_9":
+            d_text = "I take your drawing, convert it to grayscale (bump map) and then use that information to generate a normal map!";
+            button_1.innerHTML = "->";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_10";
+            break;
+        case "Normal_Map_10":
+            d_text = "The calculations are a bit complex, but you can thank Inigo Quilez for providing the code to do so!";
+            button_1.innerHTML = "End Lesson!";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Normal_Map_end";
+            break;
+        case "Normal_Map_end":
+            hideDrawingArea();
+            Demo.Dialogue_Meshes_rescale(21);
+            d_text = "";
+            button_1.innerHTML = "";
+            type_letters(d_text, false, false, false, false);
+            dialogue_progression = "Normal_Map_10";
+            End_Dialogue();
+            break;
+            
+
+
     }
 
 }

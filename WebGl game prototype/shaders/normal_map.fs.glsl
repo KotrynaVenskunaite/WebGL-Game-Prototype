@@ -5,6 +5,8 @@ precision mediump float;
 const float ZERO = 0.0;
 const float ONE = 1.0;
 
+const float normalStrength = 0.1;
+
 // uniforms
 uniform vec4 lightColor;
 uniform vec4 lightPosition;             // should be in the eye space
@@ -16,12 +18,60 @@ uniform float materialShininess;        // material specular exponent
 uniform sampler2D map0;                 // texture map
 uniform sampler2D map1;                 // normal map
 
+uniform vec2 normalMapResolution;
+uniform bool isMapGenerated;
+uniform int renderResult;
+
 // input varying variables
 varying vec3 positionVec;               // vertex position in eye space
 varying vec3 normalVec;                 // normal vector in eye space
 varying vec2 texCoord0;                 // texture coords
 varying vec3 tangentVec;                // tangent vector in eye space
 varying vec3 binormalVec;               // binormal (bitangent) vector in eye space
+
+vec3 Blur(vec2 uv) {
+  const float Pi = 6.28318530718; // Pi*2
+  // GAUSSIAN BLUR SETTINGS {{{
+  const float Directions = 16.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
+  const float Quality = 3.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
+  const float Size = 2.0; // BLUR SIZE (Radius)
+  // GAUSSIAN BLUR SETTINGS }}}
+  vec2 Radius = Size / normalMapResolution;
+
+   // Normalized pixel coordinates (from 0 to 1)
+  vec3 color = texture2D(map1, uv).rgb;
+
+    // Blur calculations
+  for(float d = 0.0; d < Pi; d += Pi / Directions) {
+    for(float i = 1.0 / Quality; i <= 1.0; i += 1.0 / Quality) {
+
+      vec2 offset = vec2(cos(d), sin(d)) * Radius * i;
+
+      color += texture2D(map1, uv + offset).rgb;
+    }
+  }
+
+  // Output to screen
+  color /= Quality * Directions - 15.0;
+
+  return color;
+}
+
+float getHeight(vec2 uv) {
+  // return texture2D(map1, uv).r;
+  return Blur(uv).r;
+}
+
+vec3 bumpFromDepth(vec2 uv) {
+
+  vec2 step = 1.0 / normalMapResolution;
+
+  float height = getHeight(uv);
+
+  vec2 dxy = height - vec2(getHeight(uv + vec2(step.x, 0.0)), getHeight(uv + vec2(0.0, step.y)));
+
+  return normalize(vec3(dxy * normalStrength / step, 1.0));
+}
 
 void main(void) {
   // re-normalize varying vars
@@ -66,7 +116,10 @@ void main(void) {
 
   // get normal in tangent space from normal map,
   // then set the range from [0, 1] to [-1, 1]
-  vec3 tsNormal = texture2D(map1, texCoord0).rgb * 2.0 - 1.0;
+  // vec3 tsNormal = texture2D(map1, vec2(1.0 - texCoord0.x, texCoord0.y)).rgb * 2.0 - 1.0;
+
+  vec3 tsNormal = (isMapGenerated == false) ? texture2D(map1, vec2(1.0 - texCoord0.x, texCoord0.y)).rgb * 2.0 - 1.0 : bumpFromDepth(vec2(1.0 - texCoord0.x, texCoord0.y));
+
   tsNormal.xy *= 1.0;
   tsNormal = normalize(tsNormal);
 
@@ -81,7 +134,7 @@ void main(void) {
   color += dotNL * materialDiffuse.rgb * lightColor.rgb;
 
   // apply texture before specular
-  color *= texture2D(map0, texCoord0).rgb;
+  color *= texture2D(map0, vec2(1.0 - texCoord0.x, texCoord0.y)).rgb;
 
   // add specular portion
   float dotVR = max(dot(tsView, tsReflect), ZERO);
@@ -89,5 +142,10 @@ void main(void) {
 
   // finally, set frag color
   // keep alpha as original material diffuse has
-  gl_FragColor = vec4(color * attenuation, materialDiffuse.a);
+  if(renderResult == 0) {
+    gl_FragColor = vec4(color * attenuation, materialDiffuse.a);
+  } else {
+    gl_FragColor = vec4(texture2D(map1, vec2(1.0 - texCoord0.x, texCoord0.y)).rgb, materialDiffuse.a);
+  }
+
 }

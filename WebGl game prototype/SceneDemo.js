@@ -37,8 +37,8 @@ DemoScene.prototype.Load = function (cb){
         Textures: function (callback){
             async.map({
                 'Vinny_Texture': 'textures/Vinny_Texture.png',
-                'Cube_Texture': 'textures/grid512.png',
-                'Normal_Texture': 'textures/test.png',
+                'Cube_Texture': 'textures/number_grid.png',
+                'Normal_Texture': 'textures/number_grid_normals.png',
             }, loadImage, callback);
         }
     }, function(LoadErrors, LoadResults){
@@ -166,7 +166,7 @@ DemoScene.prototype.Load = function (cb){
         glMatrix.mat4.scale(
             me.BoxMesh.world,         
             me.BoxMesh.world,         
-            glMatrix.vec3.fromValues(0.3, 0.3, 0.3) // scale X/Y/Z
+            glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
         );
          glMatrix.mat4.rotate(
             me.BoxMesh.world, me.BoxMesh.world,
@@ -175,7 +175,7 @@ DemoScene.prototype.Load = function (cb){
         );
         glMatrix.mat4.translate(
             me.BoxMesh.world, me.BoxMesh.world,
-            glMatrix.vec4.fromValues(0, 0, 0)
+            glMatrix.vec4.fromValues(0, -5.3, 43.8)
         );
 
         // Vinny Model
@@ -501,6 +501,44 @@ DemoScene.prototype.Load = function (cb){
 						me.Vinny_Crossed_arms.world, me.Vinny_Crossed_arms.world,
 						me.vinny_dialogue_position
 					);
+
+
+
+
+
+                    //PLACEHOLDER OVERWORLD MODEL
+                    me.Vinny_Overworld_Plaacegolder_CrossArms = new Model(
+                        me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vinny_Texture,
+                        outline_color,
+                        'Vinny_2'
+                    );
+                    glMatrix.mat4.scale(
+                        me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                        me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                        me.vinny_scale
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+                    );
+                    glMatrix.mat4.translate(
+                        me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                        glMatrix.vec4.fromValues(5, 0, 0)
+                    );
+
+                    //PLACEHOLDER END
 					break;
 				case 'Outline':
 					me.Vinny_Outline_crossed_arms = new Model(
@@ -536,6 +574,8 @@ DemoScene.prototype.Load = function (cb){
 					break;
             }
         }
+
+        
 
         // Palm point
         for (var i = 0; i < LoadResults.Models.Vinny_Palm_Point.meshes.length; i++) {
@@ -667,10 +707,13 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Vincent outline crossed arms mesh');
             return;
         }
+        if(!me.Vinny_Overworld_Plaacegolder_CrossArms){
+            cb('failed to load Vincent outline crossed arms mesh');
+            return;
+        }
         
-
         // VARIABLES
-        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms];
+        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms];
         me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms];
         me.Dialogue_Meshes = [
             me.Vinny_Crossed_arms, me.Vinny_Outline_crossed_arms,
@@ -678,10 +721,14 @@ DemoScene.prototype.Load = function (cb){
             me.Vinny_Point_Up, me.Vinny_Outline_point_up
         ]
         me.Dither_Meshes = [me.BallMesh];
-        me.NormalMeshes = [me.BoxMesh];
+        me.NormalMeshes = [me.BoxMesh]; //me.BoxMesh
         // me.Vinny_Outline_start,me.Book_Outline, me.Bench_Outline
         //Light position
         me.lightPosition = glMatrix.vec3.fromValues(0.0, 8.0, 4.0);
+        me.lightPositionNormals = glMatrix.vec4.fromValues(0.4, 0.1, -0.33, 1.0);
+        me.isLightRotating = false
+        me.NormalShaderResultIndicator = 0;
+        
 
         //DitherVariables
         me.is_dither_enabled = 1.0
@@ -692,6 +739,11 @@ DemoScene.prototype.Load = function (cb){
         me.quantize_value = 10.0
         me.threshold = 0.3
         me.lit = 1.0
+
+        //Normal variables
+        me.textureWidth = 400;
+        me.textureHeight = 400;
+        me.isMapGenerated = 0;
 
         
 
@@ -781,7 +833,10 @@ DemoScene.prototype.Load = function (cb){
             materialShininess: me.gl.getUniformLocation(me.NormalProgram, 'materialShininess'),
             map0: me.gl.getUniformLocation(me.NormalProgram, 'map0'),
             map1: me.gl.getUniformLocation(me.NormalProgram, 'map1'),
-
+            normalMapResolution: me.gl.getUniformLocation(me.NormalProgram, 'normalMapResolution'),
+            isMapGenerated: me.gl.getUniformLocation(me.NormalProgram, 'isMapGenerated'),
+            renderResult: me.gl.getUniformLocation(me.NormalProgram, 'renderResult'),
+            
             matrixNormal: me.gl.getUniformLocation(me.NormalProgram, 'matrixNormal'),
             matrixModelView: me.gl.getUniformLocation(me.NormalProgram, 'matrixModelView'),
             matrixModelViewProjection: me.gl.getUniformLocation(me.NormalProgram, 'matrixModelViewProjection')
@@ -871,10 +926,12 @@ DemoScene.prototype.Unload = function (){
     this.NormalProgram = null;
     this.camera = null;
     this.lightPosition = null;
+    this.lightPositionNormals = null;
+    me.isLightRotating = null;
     this.Meshes = null;
     this.Outlines = null;
     this.Dialogue_Meshes = null;
-    me.PressedKeys = null;
+    this.PressedKeys = null;
 };
 
 DemoScene.prototype.Begin = function (){
@@ -970,6 +1027,24 @@ DemoScene.prototype._Update = function (dt) {
     //     dt/1000 * 2 * Math.PI *   (0.3)//rotations per second
     // );
 
+    if(this.isLightRotating == true){
+        const pos3 = [
+            this.lightPositionNormals[0],
+            this.lightPositionNormals[1],
+            this.lightPositionNormals[2]
+        ];
+
+        glMatrix.vec3.rotateZ(
+            pos3,
+            pos3,
+            [0.4, 0.0, -0.33],
+            glMatrix.glMatrix.toRadian(1)
+        );
+
+        this.lightPositionNormals[0] = pos3[0];
+        this.lightPositionNormals[1] = pos3[1];
+    }
+    
     
 
     //Raycast from camera
@@ -988,8 +1063,9 @@ DemoScene.prototype._Update = function (dt) {
         );
 
         if (raySphereIntersect(this.rayOrigin, this.rayDirection, modelCenter, this.intersectRadius, this.maxInteractionRange)) {
-            // console.log("Looking at model!", model.name);
             InitiateConversation(model.name, 1, this.PressedKeys.F);
+            break; //else the check works only on the last model in the array
+                
         }else{
             InitiateConversation(model.name, 0, null);
         }
@@ -1012,13 +1088,13 @@ DemoScene.prototype._Update = function (dt) {
 		this.camera.moveRight(-dt / 1000 * this.MoveForwardSpeed);
 	}
 
-	// if (this.PressedKeys.Up && !this.PressedKeys.Down && this.can_cam_move == true) {
-	// 	this.camera.moveUp(dt / 1000 * this.MoveForwardSpeed);
-	// }
+	if (this.PressedKeys.Up && !this.PressedKeys.Down && this.can_cam_move == true) {
+		this.camera.moveUp(dt / 1000 * this.MoveForwardSpeed);
+	}
 
-	// if (this.PressedKeys.Down && !this.PressedKeys.Up && this.can_cam_move == true) {
-	// 	this.camera.moveUp(-dt / 1000 * this.MoveForwardSpeed);
-	// }
+	if (this.PressedKeys.Down && !this.PressedKeys.Up && this.can_cam_move == true) {
+		this.camera.moveUp(-dt / 1000 * this.MoveForwardSpeed);
+	}
 
 	if (this.PressedKeys.RotRight && !this.PressedKeys.RotLeft && this.can_cam_move == true) {
 		this.camera.rotateRight(-dt / 1000 * this.RotateSpeed);
@@ -1259,18 +1335,27 @@ DemoScene.prototype._NormalMap = function (){
     // gl.clearColor(0.0, 0.0, 0.0, 1); //Background color
     // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-
+    
     gl.useProgram(this.NormalProgram);
     gl.uniform4fv(this.NormalProgram.uniforms.lightColor,[1.0, 1.0, 1.0, 1.0]);
-    gl.uniform4fv(this.NormalProgram.uniforms.lightPosition,[0.0, 0.0, 0.0, 1.0]);
+    gl.uniform4fv(this.NormalProgram.uniforms.lightPosition, this.lightPositionNormals); //[0.0, 0.0, 0.0, 1.0]
     gl.uniform3fv(this.NormalProgram.uniforms.lightAttenuations,[1.0, 0.09, 0.032]);
     gl.uniform4fv(this.NormalProgram.uniforms.materialAmbient,[0.2, 0.2, 0.2, 1.0]);
     gl.uniform4fv(this.NormalProgram.uniforms.materialDiffuse,[1.0, 1.0, 1.0, 1.0]);
     gl.uniform4fv(this.NormalProgram.uniforms.materialSpecular,[1.0, 1.0, 1.0, 1.0]);
     gl.uniform1f(this.NormalProgram.uniforms.materialShininess, 32.0);
+    gl.uniform1i(this.NormalProgram.uniforms.renderResult, this.NormalShaderResultIndicator);
 
     gl.uniform1i(this.NormalProgram.uniforms.map0, 0);
     gl.uniform1i(this.NormalProgram.uniforms.map1, 1);
+
+    gl.uniform2f(
+        this.NormalProgram.uniforms.normalMapResolution,
+        this.textureWidth,
+        this.textureHeight
+    );
+    gl.uniform1i(this.NormalProgram.uniforms.isMapGenerated, this.isMapGenerated);
+    
 
     // Draw meshes
 
@@ -1507,7 +1592,37 @@ DemoScene.prototype.Show_Ball  = function(is_ball_showing){
 DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
     // 0 - crossed arms
     // 2 - palm
-    // 4 - pont up
+    // 4 - point up
+    //20 - Show Box Mesh
+
+    if (current_mesh >= 20){
+        glMatrix.mat4.identity(this.BoxMesh.world);
+        if (current_mesh == 20){
+            glMatrix.mat4.scale(
+                this.BoxMesh.world,         
+                this.BoxMesh.world,         
+                glMatrix.vec3.fromValues(0.1, 0.1, 0.1) // scale X/Y/Z
+            );
+        }
+        else{
+            glMatrix.mat4.scale(
+                this.BoxMesh.world,         
+                this.BoxMesh.world,         
+                glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
+            );
+        }
+        glMatrix.mat4.rotate(
+            this.BoxMesh.world, this.BoxMesh.world,
+            glMatrix.glMatrix.toRadian(90),
+            glMatrix.vec3.fromValues(-1, 0, 0)
+        );
+        glMatrix.mat4.translate(
+            this.BoxMesh.world, this.BoxMesh.world,
+            glMatrix.vec4.fromValues(0, -5.3, 43.8)
+        );
+        console.log("box should be visable")
+        return;
+    }
 
     for (var i = 0; i < this.Dialogue_Meshes.length; i++){
         glMatrix.mat4.identity(this.Dialogue_Meshes[i].world);
@@ -1558,6 +1673,11 @@ DemoScene.prototype.Set_Dither_Shader_Variabled = function(dither, grid, ratio, 
 
 DemoScene.prototype.Set_Image_as_Normal = function(){
     var gl = this.gl;
+
+    // ctx.filter = "blur(3px)";
+    // ctx.drawImage(canvas, 0, 0);
+    // ctx.filter = "none";
+    this.lightPositionNormals = glMatrix.vec4.fromValues(0.4, 0.25, -0.33, 1.0);
     gl.bindTexture(gl.TEXTURE_2D, this.Normal_Texture);
 
     gl.texImage2D(
@@ -1565,8 +1685,23 @@ DemoScene.prototype.Set_Image_as_Normal = function(){
         gl.UNSIGNED_BYTE,
         canvas
     );
-    
-    // gl.bindTexture(gl.TEXTURE_2D, null);
+
+    gl.bindTexture(gl.TEXTURE_2D, this.Cube_Texture);
+
+    gl.texImage2D(
+        gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+        gl.UNSIGNED_BYTE,
+        canvas
+    );
 
     console.log("executed");
+
+    this.textureWidth = canvas.width;
+    this.textureHeight =  canvas.height;
+    this.isMapGenerated = 1;
+    this.isLightRotating = true;
+}
+
+DemoScene.prototype.changeNormalShaderRenderResult = function(newShaderIndicator){
+    this.NormalShaderResultIndicator = newShaderIndicator;
 }

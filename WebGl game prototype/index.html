@@ -21,7 +21,7 @@
                     <img id="image_window" src="textures/dither_gradient.png" alt = "dither example"></img>
                 </div>
 
-                <div id="dialogue_box">
+                <div id="dialogue_box" unselectable="on" onselectstart="return false;" >
                     <div id="dialog_name"></div>
                     <div id="dialog_text">
                         <div id="dialog_text_text"></div>
@@ -33,12 +33,28 @@
                         </div>
                     </div>
                 </div>
+
+               
                 
 
             </div>
             
         </div>
-        <br />
+
+        <div class="drawing_area">
+            <div class="drawing_canvas_container" id="drawing_canvas_id">
+                <canvas id="drawing_canvas"  width="400" height="400"></canvas>
+            </div>
+            <div class="drawing_options">
+                <input type="color" id="favcolor" name="favcolor" value="#ff0000">
+                <!-- <label for="favcolor">Color</label> -->
+                <input type="range" id="brushSize" name="Brush Size" min="1" max="30"/>
+                <label for="Brush Size">Brush Size</label>
+                <button onclick="clearCanvas()" class ="drawing_buttons">Clear</button>
+                <button onclick="makeNormalMap()" class ="drawing_buttons">Make Normal Map</button>
+            </div>
+        </div>
+        
         
         <!-- <i>Demo is above this text</i> -->
         

@@ -161,6 +161,59 @@
     font-size: clamp(0.9em, 2.0vw, 1.4em);
 }
 
+.drawing_canvas_container{
+    border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459);
+
+    
+    width: 70%;
+    aspect-ratio: 1/1;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    /* display: none; */
+}
+
+.drawing_area{
+    /* border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459); */
+
+    
+    width: 30%;
+    aspect-ratio: 1/1;
+
+    top: 35%;
+    left: 55%;
+
+    transform: translate(-50%, -50%);
+
+    position: fixed;
+
+    display: none;
+}
+.drawing_buttons{
+    background-color:black;
+    border: 3px solid white;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+.drawing_options{
+    display: flex;
+    column-gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
 
 
 /* IRIS */
@@ -196,3 +249,4 @@
     --iris-radius: -50%;
     --iris-gradient-length: 0px;
 }
+

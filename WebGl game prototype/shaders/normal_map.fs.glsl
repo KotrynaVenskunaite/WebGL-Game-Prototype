@@ -137,8 +137,8 @@ void main(void) {
   color *= texture2D(map0, vec2(1.0 - texCoord0.x, texCoord0.y)).rgb;
 
   // add specular portion
-  float dotVR = max(dot(tsView, tsReflect), ZERO);
-  color += pow(dotVR, materialShininess) * materialSpecular.rgb * lightColor.rgb;
+  // float dotVR = max(dot(tsView, tsReflect), ZERO);
+  // color += pow(dotVR, materialShininess) * materialSpecular.rgb * lightColor.rgb;
 
   // finally, set frag color
   // keep alpha as original material diffuse has

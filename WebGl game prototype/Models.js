@@ -8,6 +8,8 @@ var Model = function (gl, vertices, indices, normals, textCoords, tangents, text
     this.tanbo = null;
 	this.nPoints = indices.length;
 
+
+
 	this.world = glMatrix.mat4.create();
 	this.textCoords = textCoords;
 

@@ -219,7 +219,7 @@ DemoScene.prototype.Load = function (cb){
         // Create Model Objects
         //
         
-        console.log(LoadResults); //See mesh names
+        // console.log(LoadResults); //See mesh names
 
 
         //Ball Model
@@ -296,7 +296,7 @@ DemoScene.prototype.Load = function (cb){
             
 			switch (mesh.name) {
 				case 'Vinny':
-                    console.log(mesh);
+                    // console.log(mesh);
 					me.Vinny_start = new Model(
 						me.gl,
 						mesh.vertices,
@@ -1395,6 +1395,10 @@ DemoScene.prototype._Outlines = function (){
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Outlines[i].ibo);
         gl.drawElements(gl.TRIANGLES, this.Outlines[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
+        // Clean up attributes
+        gl.disableVertexAttribArray(this.ColorProgram.attribs.vPos);
+        gl.disableVertexAttribArray(this.ColorProgram.attribs.vNorm);
     }
 }
 
@@ -1466,6 +1470,11 @@ DemoScene.prototype._Render = function () {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Meshes[i].ibo);
         gl.drawElements(gl.TRIANGLES, this.Meshes[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
+        // Clean up attributes
+        gl.disableVertexAttribArray(this.NoShadowProgram.attribs.vPos);
+        gl.disableVertexAttribArray(this.NoShadowProgram.attribs.vNorm);
+        gl.disableVertexAttribArray(this.NoShadowProgram.attribs.texCoordAttributeLocation);
     }
 
 
@@ -1553,6 +1562,11 @@ DemoScene.prototype._Specular = function () {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.SpecularMeshes[i].ibo);
         gl.drawElements(gl.TRIANGLES, this.SpecularMeshes[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
+        // Clean up attributes
+        gl.disableVertexAttribArray(this.SpecularProgram.attribs.vPos);
+        gl.disableVertexAttribArray(this.SpecularProgram.attribs.vNorm);
+        gl.disableVertexAttribArray(this.SpecularProgram.attribs.texCoordAttributeLocation);
     }
 
 
@@ -1634,6 +1648,11 @@ DemoScene.prototype._Dither = function () {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Dither_Meshes[i].ibo);
         gl.drawElements(gl.TRIANGLES, this.Dither_Meshes[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
+        // Clean up attributes
+        gl.disableVertexAttribArray(this.DitherProgram.attribs.vPos);
+        gl.disableVertexAttribArray(this.DitherProgram.attribs.vNorm);
+        gl.disableVertexAttribArray(this.DitherProgram.attribs.texCoordAttributeLocation);
     }
 };
 
@@ -1745,6 +1764,12 @@ DemoScene.prototype._NormalMap = function (){
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.NormalMeshes[i].ibo);
         gl.drawElements(gl.TRIANGLES, this.NormalMeshes[i].nPoints, gl.UNSIGNED_SHORT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
+        // Clean up attributes
+        gl.disableVertexAttribArray(this.NormalProgram.attribs.vertexPosition);
+        gl.disableVertexAttribArray(this.NormalProgram.attribs.vertexNormal);
+        gl.disableVertexAttribArray(this.NormalProgram.attribs.vertexTexCoord0);
+        gl.disableVertexAttribArray(this.NormalProgram.attribs.vertexTangent);
     }
 }
 

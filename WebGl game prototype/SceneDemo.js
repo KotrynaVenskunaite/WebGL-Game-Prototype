@@ -33,7 +33,9 @@ DemoScene.prototype.Load = function (cb){
                 'Normal_FS': 'shaders/normal_map.fs.glsl',
                 'Normal_VS': 'shaders/normal_map.vs.glsl',
                 'Specular_FS': 'shaders/specular.fs.glsl',
-                'Specular_VS': 'shaders/specular.vs.glsl'
+                'Specular_VS': 'shaders/specular.vs.glsl',
+                'Post_Process_FS': 'shaders/post_process.fs.glsl',
+                'Post_Process_VS': 'shaders/post_process.vs.glsl'
             }, loadTextResource, callback);
 
         },
@@ -963,6 +965,11 @@ DemoScene.prototype.Load = function (cb){
             LoadResults.ShaderCode.Specular_FS
         );
 
+        me.PostProcessProgram = CreateShaderProgram(
+            me.gl, LoadResults.ShaderCode.Post_Process_VS,
+            LoadResults.ShaderCode.Post_Process_FS
+        );
+
         
 
         if (me.NoShadowProgram.error){
@@ -1131,6 +1138,8 @@ DemoScene.prototype.Load = function (cb){
 
     me.MoveForwardSpeed = 2;
 	me.RotateSpeed = 1;
+
+    postProcessSetup(me.gl);
     
 };
 
@@ -1170,14 +1179,18 @@ DemoScene.prototype.Begin = function (){
     var loop = function (currentFrameTime){
         dt = currentFrameTime - previuousFrame;
         me._Update(dt);
-        previuousFrame = currentFrameTime;
 
+        previuousFrame = currentFrameTime;
+        var gl = me.gl; //in loop
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
         me._Outlines();
         me._Render();
         me._Specular();
         me._NormalMap();
         me._Dither();
-        
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        me._PostProcess();
 
         me.nextFrameHandle = requestAnimationFrame(loop);
     };
@@ -1332,6 +1345,27 @@ DemoScene.prototype._Update = function (dt) {
     this.camera.GetViewMatrix(this.viewMatrix);
     // console.log(this.camera.position);
 };
+
+DemoScene.prototype._PostProcess = function(){
+    var gl = this.gl;
+    //clear color
+    gl.disable(gl.CULL_FACE);
+    gl.disable(gl.DEPTH_TEST);
+    gl.clearColor(0.0, 0.0, 0.0, 1); //Background color
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.bindVertexArray(postProcessVao);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, postProcessIbo);
+    gl.useProgram(this.PostProcessProgram);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, framebufferTexture);
+    gl.uniform1i(gl.getUniformLocation(this.PostProcessProgram, 'sampler'), 0);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
+
+    //unbind buffers
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+    gl.bindVertexArray(null);
+}
 
 DemoScene.prototype._Outlines = function (){
     var gl = this.gl;
@@ -1804,6 +1838,7 @@ DemoScene.prototype._OnResizeWindow = function(){
     container.style.top = gl.canvas.style.top;
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    resizeFramebuffer(gl, gl.canvas);
 
     if (this.is_camera_ortho == false){
         glMatrix.mat4.perspective(
@@ -2047,3 +2082,4 @@ DemoScene.prototype.changeNormalShaderRenderResult = function(newShaderIndicator
 DemoScene.prototype.configureSpecular = function (spec_map){
     this.use_spec_map = spec_map;
 }
+

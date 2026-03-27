@@ -2,6 +2,7 @@
 
 var Demo;
 
+
 function InitDemo(){
     var canvas = document.getElementById('game_surface');
     var gl = canvas.getContext('webgl2');

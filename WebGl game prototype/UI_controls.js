@@ -40,7 +40,7 @@ function InitiateConversation(name, can_start_convo, is_starting) {
     // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
     //     return;
     // }
-    if (name != "Vinny_2" && name != "Vincent"){
+    if (name != "Vinny_2" && name != ""){
         return;
     }
     // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);

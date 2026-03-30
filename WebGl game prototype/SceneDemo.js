@@ -44,7 +44,6 @@ DemoScene.prototype.Load = function (cb){
                 'Vinny_Texture': 'textures/Vinny_Texture.png',
                 'Cube_Texture': 'textures/number_grid.png',
                 'Normal_Texture': 'textures/number_grid_normals.png',
-                'Normal_Texture': 'textures/number_grid_normals.png',
                 'Specular_Base_Texture': 'textures/container2.png',
                 'Specular_Texture': 'textures/choso_specular.png',
                 'Ornstein_Texture': 'textures/ornstein_helm.png',
@@ -269,7 +268,7 @@ DemoScene.prototype.Load = function (cb){
             BoxModel.meshes[0].normals,
             BoxModel.meshes[0].texturecoords[0],
             tangents,
-            me.Specular_Base_Texture,
+            me.Cube_Texture,
             box_color,
             'Box'
         );
@@ -648,6 +647,38 @@ DemoScene.prototype.Load = function (cb){
                         glMatrix.vec4.fromValues(5, 0, 0)
                     );
 
+                    //2nd
+                    me.Vinny_Overworld_Plaacegolder_2_CrossArms = new Model(
+                        me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vinny_Texture,
+                        outline_color,
+                        'Vinny_3'
+                    );
+                    glMatrix.mat4.scale(
+                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                        me.vinny_scale
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+                    );
+                    glMatrix.mat4.translate(
+                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                        glMatrix.vec4.fromValues(7, 0, 0)
+                    );
+
                     //PLACEHOLDER END
 					break;
 				case 'Outline':
@@ -762,7 +793,8 @@ DemoScene.prototype.Load = function (cb){
 
 
         // Ornstein model
-        me.ornstein_position = glMatrix.vec4.fromValues(2, 1, 1);
+        me.ornstein_position = glMatrix.vec4.fromValues(3, 44, 0);
+        me.ornstein_scale = glMatrix.vec3.fromValues(0.1, 0.1, 0.1);
         for (var i = 0; i < LoadResults.Models.Ornstein.meshes.length; i++) {
 			var mesh = LoadResults.Models.Ornstein.meshes[i];
 			switch (mesh.name) {
@@ -781,7 +813,7 @@ DemoScene.prototype.Load = function (cb){
                     glMatrix.mat4.scale(
                         me.Ornstein.world,         
                         me.Ornstein.world,         
-                        me.vinny_scale // scale X/Y/Z
+                        glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
                     );
 					glMatrix.mat4.rotate(
 						me.Ornstein.world, me.Ornstein.world,
@@ -809,7 +841,7 @@ DemoScene.prototype.Load = function (cb){
                     glMatrix.mat4.scale(
                         me.Ornstein_hair.world,         
                         me.Ornstein_hair.world,         
-                        me.vinny_scale // scale X/Y/Z
+                        glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
                     );
 					glMatrix.mat4.rotate(
 						me.Ornstein_hair.world, me.Ornstein_hair.world,
@@ -885,6 +917,10 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Vincent outline crossed arms mesh');
             return;
         }
+        if(!me.Vinny_Overworld_Plaacegolder_2_CrossArms){
+            cb('failed to load Vincent outline crossed arms mesh');
+            return;
+        }
         if(!me.Ornstein){
             cb('failed to load Ornstein mesh');
             return;
@@ -895,7 +931,7 @@ DemoScene.prototype.Load = function (cb){
         }
         
         // VARIABLES
-        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms];
+        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms, me.Vinny_Overworld_Plaacegolder_2_CrossArms];
         me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms];
         me.Dialogue_Meshes = [
             me.Vinny_Crossed_arms, me.Vinny_Outline_crossed_arms,
@@ -903,8 +939,8 @@ DemoScene.prototype.Load = function (cb){
             me.Vinny_Point_Up, me.Vinny_Outline_point_up
         ]
         me.Dither_Meshes = [me.BallMesh];
-        me.NormalMeshes = []; //me.BoxMesh
-        me.SpecularMeshes = [me.Ornstein, me.Ornstein_hair, me.BoxMesh];
+        me.NormalMeshes = [me.BoxMesh]; //me.BoxMesh
+        me.SpecularMeshes = [me.Ornstein, me.Ornstein_hair];
         me.SpecularTextures = [me.Ornstein_Specular_Texture, me.Ornstein_Hair_Specular_Texture, me.Specular_Texture];
         // me.Vinny_Outline_start,me.Book_Outline, me.Bench_Outline
         //Light position
@@ -929,11 +965,26 @@ DemoScene.prototype.Load = function (cb){
         me.textureHeight = 400;
         me.isMapGenerated = 0;
         me.isLightRotating = false;
+        me.useSpecular = false;
 
         //Specular variables
         me.use_spec_map = false;
         me.NormalShaderResultIndicator = 0;
         me.Ornstein_rotate = true;
+        me.specular_intensity = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+        me.specular_swich = 1;
+        me.enable_specular_demonstration = false;
+
+        //Post process variables
+        me.REDxOffset = 0.05;
+        me.REDyOffset = 0.0;
+        me.GREENxOffset = 0.0;
+        me.GREENyOffset = 0.0;
+        me.BLUExOffset = -0.05;
+        me.BLUEyOffset = 0.0;
+
+        me.useChromatic = false;
+        me.useBlur = false;
 
 
         //
@@ -976,16 +1027,19 @@ DemoScene.prototype.Load = function (cb){
             cb('NoShadowProgram ' + me.NoShadowProgram.error); return;
         }
         if (me.ColorProgram.error){
-            cb('NoShadowProgram ' + me.NoShadowProgram.error); return;
+            cb('ColorProgram ' + me.ColorProgram.error); return;
         }
         if (me.DitherProgram.error){
-            cb('DitherProgram ' + me.NoShadowProgram.error); return;
+            cb('DitherProgram ' + me.DitherProgram.error); return;
         }
         if (me.NormalProgram.error){
-            cb('NormalProgram ' + me.NoShadowProgram.error); return;
+            cb('NormalProgram ' + me.NormalProgram.error); return;
         }
         if (me.SpecularProgram.error){
-            cb('SpecularProgram ' + me.NoShadowProgram.error); return;
+            cb('SpecularProgram ' + me.SpecularProgram.error); return;
+        }
+        if (me.PostProcessProgram.error){
+            cb('PostProcessProgram ' + me.PostProcessProgram.error); return;
         }
 
         me.NoShadowProgram.uniforms = {
@@ -1053,11 +1107,31 @@ DemoScene.prototype.Load = function (cb){
             normalMapResolution: me.gl.getUniformLocation(me.NormalProgram, 'normalMapResolution'),
             isMapGenerated: me.gl.getUniformLocation(me.NormalProgram, 'isMapGenerated'),
             renderResult: me.gl.getUniformLocation(me.NormalProgram, 'renderResult'),
+            useSpecular: me.gl.getUniformLocation(me.NormalProgram, 'useSpecular'),
             
             matrixNormal: me.gl.getUniformLocation(me.NormalProgram, 'matrixNormal'),
             matrixModelView: me.gl.getUniformLocation(me.NormalProgram, 'matrixModelView'),
             matrixModelViewProjection: me.gl.getUniformLocation(me.NormalProgram, 'matrixModelViewProjection')
             
+        };
+
+        me.PostProcessProgram.uniforms = {
+            // mWorld: me.gl.getUniformLocation(me.NoShadowProgram, 'mWorld'),
+            // mView: me.gl.getUniformLocation(me.NoShadowProgram, 'mView'),
+            // mProj: me.gl.getUniformLocation(me.NoShadowProgram, 'mProj'),
+
+            sampler: me.gl.getUniformLocation(me.PostProcessProgram, 'sampler'),
+            canvasResolution: me.gl.getUniformLocation(me.PostProcessProgram, 'canvasResolution'),
+
+            REDxOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'REDxOffset'),
+            REDyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'REDyOffset'),
+            GREENxOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'GREENxOffset'),
+            GREENyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'GREENyOffset'),
+            BLUExOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'BLUExOffset'),
+            BLUEyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'BLUEyOffset'),
+
+            useCA: me.gl.getUniformLocation(me.PostProcessProgram, 'useCA'),
+            useBlur: me.gl.getUniformLocation(me.PostProcessProgram, 'useBlur')
         };
 
         me.NormalProgram.attribs = {
@@ -1264,6 +1338,31 @@ DemoScene.prototype._Update = function (dt) {
             dt/1000 * 2 * Math.PI *   (0.2)//rotations per second
         );
     }
+
+    // specular shift
+    if(this.enable_specular_demonstration == true){
+        const slecular_light_change_rate = 1.9;
+        const specular_change = slecular_light_change_rate * (dt/1000)
+
+        if(this.specular_intensity[0] >= 3.0){
+            this.specular_swich = 0;
+        }
+        if(this.specular_intensity[0] <= 0.0){
+            this.specular_swich = 1;
+        }
+        // console.log(this.specular_swich);
+        if (this.specular_swich == 0){
+            for (let i = 0; i < 3; i++) {
+                this.specular_intensity[i] -= specular_change;
+            }
+        }else{
+            for (let i = 0; i < 3; i++) {
+                this.specular_intensity[i] += specular_change;
+            }
+        }
+    }
+    
+    
    
 
     if(this.isLightRotating == true){
@@ -1359,7 +1458,24 @@ DemoScene.prototype._PostProcess = function(){
     gl.useProgram(this.PostProcessProgram);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, framebufferTexture);
-    gl.uniform1i(gl.getUniformLocation(this.PostProcessProgram, 'sampler'), 0);
+    gl.uniform1i(this.PostProcessProgram.uniforms.sampler, 0);
+    gl.uniform2f(
+        this.PostProcessProgram.uniforms.canvasResolution,
+        this.textureWidth,
+        this.textureHeight
+    );
+    //offsets
+    gl.uniform1f(this.PostProcessProgram.uniforms.REDxOffset, this.REDxOffset);
+    gl.uniform1f(this.PostProcessProgram.uniforms.REDyOffset, this.REDyOffset);
+    gl.uniform1f(this.PostProcessProgram.uniforms.GREENxOffset, this.GREENxOffset);
+    gl.uniform1f(this.PostProcessProgram.uniforms.GREENyOffset, this.GREENyOffset);
+    gl.uniform1f(this.PostProcessProgram.uniforms.BLUExOffset, this.BLUExOffset);
+    gl.uniform1f(this.PostProcessProgram.uniforms.BLUEyOffset, this.BLUEyOffset);
+
+    //on/off shaders
+    gl.uniform1i(this.PostProcessProgram.uniforms.useCA, this.useChromatic);
+    gl.uniform1i(this.PostProcessProgram.uniforms.useBlur, this.useBlur);
+
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
 
     //unbind buffers
@@ -1533,7 +1649,7 @@ DemoScene.prototype._Specular = function () {
     gl.uniform3fv(this.SpecularProgram.uniforms.material_specular, [0.5, 0.5, 0.5]);
     gl.uniform1f(this.SpecularProgram.uniforms.shininess, 10.0); //reflection size
     gl.uniform3fv(this.SpecularProgram.uniforms.ambient, [0.2, 0.2, 0.2]);
-    gl.uniform3fv(this.SpecularProgram.uniforms.light_specular, [1.0, 1.0, 1.0]); //increase reflection intensity
+    gl.uniform3fv(this.SpecularProgram.uniforms.light_specular, this.specular_intensity); //increase reflection intensity
 
     gl.uniform3fv(this.SpecularProgram.uniforms.viewPos, this.camera.position); //this.camera.position
     
@@ -1711,6 +1827,7 @@ DemoScene.prototype._NormalMap = function (){
     gl.uniform4fv(this.NormalProgram.uniforms.materialSpecular,[1.0, 1.0, 1.0, 1.0]);
     gl.uniform1f(this.NormalProgram.uniforms.materialShininess, 32.0);
     gl.uniform1i(this.NormalProgram.uniforms.renderResult, this.NormalShaderResultIndicator);
+    gl.uniform1i(this.NormalProgram.uniforms.useSpecular, this.useSpecular);
 
     gl.uniform1i(this.NormalProgram.uniforms.map0, 0);
     gl.uniform1i(this.NormalProgram.uniforms.map1, 1);
@@ -1967,8 +2084,40 @@ DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
     // 2 - palm
     // 4 - point up
     //20 - Show Box Mesh
+    //30 - Ornstein helm 
 
-    if (current_mesh >= 20){
+    if (current_mesh >= 30){
+        for (var i = 0; i < 2; i++){
+            glMatrix.mat4.identity(this.SpecularMeshes[i].world);
+
+            if (current_mesh == 30){
+                glMatrix.mat4.scale(
+                    this.SpecularMeshes[i].world,         
+                    this.SpecularMeshes[i].world,         
+                    this.ornstein_scale
+                );
+            }else{
+                glMatrix.mat4.scale(
+                    this.SpecularMeshes[i].world,         
+                    this.SpecularMeshes[i].world,         
+                    glMatrix.vec3.fromValues(0.0, 0.0, 0.0)
+                );
+            }
+
+            glMatrix.mat4.rotate(
+                this.SpecularMeshes[i].world,  this.SpecularMeshes[i].world,
+                glMatrix.glMatrix.toRadian(90),
+                glMatrix.vec3.fromValues(0, -1, 0)
+            );
+            glMatrix.mat4.translate(
+                this.SpecularMeshes[i].world, this.SpecularMeshes[i].world,
+                this.ornstein_position
+            );
+        }
+        return;
+    }
+
+    if (current_mesh >= 20 && current_mesh < 30){
         glMatrix.mat4.identity(this.BoxMesh.world);
         if (current_mesh == 20){
             glMatrix.mat4.scale(
@@ -1993,7 +2142,6 @@ DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
             this.BoxMesh.world, this.BoxMesh.world,
             glMatrix.vec4.fromValues(0, -5.3, 43.8)
         );
-        console.log("box should be visable")
         return;
     }
 
@@ -2067,7 +2215,6 @@ DemoScene.prototype.Set_Image_as_Normal = function(){
         canvas
     );
 
-    console.log("executed");
 
     this.textureWidth = canvas.width;
     this.textureHeight =  canvas.height;
@@ -2075,11 +2222,25 @@ DemoScene.prototype.Set_Image_as_Normal = function(){
     this.isLightRotating = true;
 }
 
+DemoScene.prototype.Set_Crate_example = function(useSpecular){
+    // var gl = this.gl;
+
+    this.lightPositionNormals = glMatrix.vec4.fromValues(0.4, 0.25, -0.33, 1.0);
+    this.BoxMesh.texture = this.Specular_Base_Texture;
+
+
+    this.textureWidth = 400;
+    this.textureHeight =  400;
+    this.isMapGenerated = 0;
+    this.isLightRotating = true;
+    this.useSpecular = useSpecular;
+}
+
 DemoScene.prototype.changeNormalShaderRenderResult = function(newShaderIndicator){
     this.NormalShaderResultIndicator = newShaderIndicator;
 }
 
-DemoScene.prototype.configureSpecular = function (spec_map){
+DemoScene.prototype.configureSpecular = function (spec_map, enable_rotation){
     this.use_spec_map = spec_map;
+    this.enable_specular_demonstration = enable_rotation;
 }
-

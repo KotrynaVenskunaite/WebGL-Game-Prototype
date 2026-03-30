@@ -215,6 +215,109 @@
     color: white;
 }
 
+/* SPECULAR QUIZ */
+.quiz_area{
+    /* border: 3px solid rgb(255, 255, 255); */
+    background-color: rgba(0, 0, 0, 0);
+
+    
+    width: 45%;
+    aspect-ratio: 5/2;
+
+    top: 35%;
+    left: 65%;
+
+    transform: translate(-50%, -50%);
+
+    padding: 1%;
+    position: fixed;
+    display:flex;
+    flex-direction: column;
+    font-family: monospace;
+    font-size: clamp(0.9em, 1.5vw, 1.4em);
+    flex-shrink: 0;
+    flex-wrap: nowrap; 
+    white-space: nowrap; 
+
+    display:none;
+}
+
+.sentences{
+    display:flex;
+    flex-direction: column;
+}
+
+#Word_area{
+    width: 60%;
+    min-height: 20%;
+    /* background: #ffc4005d; */
+    background: transparent;
+    margin: 5px;
+    border: 3px solid white;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: auto;
+    align-self: center;
+    
+}
+
+#first_sentence, #second_sentence, #third_sentence, #fourth_sentence, #fifth_sentence{
+    min-width: 100px;
+    min-height: 30px;
+    background: transparent;
+    margin: 1%;
+    /* margin-left: 3%;
+    margin-right: 3%; */
+    /* border: 3px solid white; */
+    border-bottom: 3px dotted white ;
+    
+    display: flex;
+    flex-direction: row;
+    /* padding: 0 10px; */
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    flex-wrap: nowrap; 
+    white-space: nowrap; 
+}
+
+#first_sentence .list,
+#second_sentence .list,
+#third_sentence .list,
+#fourth_sentence .list,
+#fifth_sentence .list {
+    border: none;
+}
+
+.list{
+    background: black;
+    border: 2px solid white;
+    height: 30px;
+    min-width: 30px;
+    width: auto;
+    margin: 1%;
+    padding-left: 1%;
+    padding-right: 1%;
+    color:white;
+    display:flex;
+    align-items: center;
+    cursor: grab;
+    flex-shrink: 0;
+    white-space: nowrap;
+    /* overflow: visible; */
+}
+
+#answer1, #answer2, #answer3, #answer4{
+    color:white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 
 /* IRIS */
 

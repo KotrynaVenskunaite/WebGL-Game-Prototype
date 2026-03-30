@@ -13,12 +13,22 @@ const button_2 = document.getElementById("button_2");
 const button_3 = document.getElementById("button_3");
 const button_4 = document.getElementById("button_4");
 
-button_1.addEventListener("click", () => vinny_dialogue_progression(1));
+button_1.addEventListener("click", onButton1Click);
 button_2.addEventListener("click", () => vinny_dialogue_progression(2));
 button_3.addEventListener("click", () => vinny_dialogue_progression(3));
 button_4.addEventListener("click", () => vinny_dialogue_progression(4));
 
 document.addEventListener('click', cancelDialogue);
+
+function onButton1Click() {
+    if (dialogue_progression === "Specular_8" || dialogue_progression === "Specular_quiz_bad") {
+        calc_quiz_score();
+        vinny_dialogue_progression(1);
+        return;
+    }
+
+    vinny_dialogue_progression(1);
+}
 
 var img = document.createElement("img");
 
@@ -28,6 +38,7 @@ var dialogue_progression = 0;
 var is_in_dialogue = false
 var did_skip_dialogue = false;
 var can_skip_dialogue = false;
+var did_learn_about_normals = false;
 
 
 img.src = 'textures/f_key.png';
@@ -40,7 +51,7 @@ function InitiateConversation(name, can_start_convo, is_starting) {
     // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
     //     return;
     // }
-    if (name != "Vinny_2" && name != ""){
+    if (name != "Vinny_2" && name != "Vincent" && name != "Vinny_3"){
         return;
     }
     // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);
@@ -70,7 +81,7 @@ function InitiateConversation(name, can_start_convo, is_starting) {
 }
 
 function Begin_Dialogue(name){
-    console.log("Dialogue w " + name);
+    // console.log("Dialogue w " + name);
     is_in_dialogue = true;
     Demo.can_cam_move = false;
     iris.classList.add("start");
@@ -114,7 +125,13 @@ function Begin_Dialogue(name){
         else if(language == "eng" && name == "Vincent")
         {
             d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding."
-            dialogue_progression = 0;
+            dialogue_progression = "Specular_8";
+        }
+        else if (name == "Vinny_3" && did_learn_about_normals == false){
+            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise"
+            button_1.innerHTML = "Okay."
+            button_2.innerHTML = "Later then."
+            dialogue_progression = "Specular_end";
         }
         // else if(name == "Vinny_2" && dialogue_progression != "dither_end")
         // {
@@ -129,8 +146,17 @@ function Begin_Dialogue(name){
             button_2.innerHTML = "You look nice!"
             dialogue_progression = "Normal_Map_Start"
         }
-        else if (name == "Vincent"){
-            d_text = "Sveikas! Aš kaip tik skaičiau apie technikas naudojamas spalvų juostavimuisi sutvarkyti."
+        // else if (name == "Vincent"){
+        //     d_text = "Sveikas! Aš kaip tik skaičiau apie technikas naudojamas spalvų juostavimuisi sutvarkyti."
+        // }
+        // else if (name == "Vincent"){
+        //     d_text = "Sveikas! Aš kaip tik skaičiau apie technikas naudojamas spalvų juostavimuisi sutvarkyti."
+        // }
+        else if (name == "Vinny_3" && did_learn_about_normals == true){
+            d_text = "Oh, you are done talking to the others? Then it is my turn to shine!"
+            button_1.innerHTML = "Indeed."
+            button_2.innerHTML = "Let's start."
+            dialogue_progression = "Specular_start";
         }
         type_letters(d_text, true, true, false, false);
     }, 3000);
@@ -182,14 +208,14 @@ function type_letters(text, b1, b2, b3, b4){
     button_4.style.display = "none";
     setTimeout(() => {
         can_skip_dialogue = true;
-        console.log("CAN SKIP NOW");
+        // console.log("CAN SKIP NOW");
     },500); //skip timer
     var typingIndex = 0;
 
     function TypeNextLetter(){
         
         if(did_skip_dialogue == true){
-            console.log(did_skip_dialogue);
+            // console.log(did_skip_dialogue);
             can_skip_dialogue = false;
             did_skip_dialogue = false;
             dialogue.textContent = text;
@@ -219,7 +245,7 @@ function show_buttons(b1, b2, b3, b4){
 function cancelDialogue(){
     if (can_skip_dialogue == true && is_in_dialogue == true){
         did_skip_dialogue = true;
-        console.log("set to true");
+        // console.log("set to true");
         // clearTimeout(this.letterTimer);
     }
     
@@ -548,7 +574,139 @@ function vinny_dialogue_progression(buttonNumber){
             d_text = "";
             button_1.innerHTML = "";
             type_letters(d_text, false, false, false, false);
-            dialogue_progression = "Normal_Map_10";
+            // dialogue_progression = "Normal_Map_10";
+            did_learn_about_normals = true;
+            End_Dialogue();
+            break;
+        
+        // SPECULAR
+        case "Specular_start":
+            // Demo.Dialogue_Meshes_rescale(0);
+            d_text = "So, now that we know how to manipulate reflection directions, let's learn how to manipulate reflection intensity instead.";
+            button_1.innerHTML = "Intensity?";
+            button_2.innerHTML = "Like brightness?";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "Specular_1";
+            break;
+        case "Specular_1":
+            Demo.Dialogue_Meshes_rescale(4);
+            d_text = "Intensity, or in other words, how reflective (shiny or matte) a material is!";
+            button_1.innerHTML = "Okay, explain.";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Specular_2";
+            break;
+        case "Specular_2":
+            Demo.Dialogue_Meshes_rescale(2);
+            Demo.Dialogue_Meshes_rescale(30);
+            Demo.configureSpecular(false, false);
+            d_text = "Take a look at this helmet. It's made of some kind of metal, so we make it shiny to reflect that!";
+            button_1.innerHTML = "How is this done?";
+            button_2.innerHTML = "How is this different than before?";
+            button_3.innerHTML = "Was the pun intended?";
+            type_letters(d_text, true, true, true, false);
+            dialogue_progression = "Specular_3";
+            break
+        case "Specular_3":
+            Demo.Dialogue_Meshes_rescale(4);
+            d_text = "This is called 'Specular light'. Unlike other forms of lighting, it creates a specular highlight, a bright spot on the surface of the object.";
+            button_1.innerHTML = "->";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Specular_4";
+            break;
+        case "Specular_4":
+            d_text = "The highlight only appears when the the camera angle aligns with the reflection angle. That is why the highlight changes as the helmet spins around.";
+            button_1.innerHTML = "It that not just normal mapping?";
+            button_2.innerHTML = "Can the brighness be controled?";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "Specular_5";
+            break;
+        case "Specular_5":
+            Demo.Dialogue_Meshes_rescale(21);
+            if(buttonNumber == 1){
+                Demo.Dialogue_Meshes_rescale(20);
+                Demo.Set_Crate_example(false)
+                Demo.configureSpecular(false, false);
+                d_text = "Normal maps, as you can see on the box, specifically dictate the direction of a reflection, not the intensity.";
+                button_1.innerHTML = "->";
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "Specular_5_2_2";
+            }
+            if(buttonNumber == 2){
+                Demo.configureSpecular(false, true);
+                d_text = "We can control the specular light intensity as we please, and like on the helmet, swich between no specular light (matte) and extremely reflective surface.";
+                button_1.innerHTML = "->";
+                // button_1.innerHTML = "It that not just normal mapping?";
+                // button_2.innerHTML = "Can we make only certain parts reflective?";
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "Specular_6";
+            }
+            if(buttonNumber == 3){
+                d_text = "This helmet has a plume of hair. In real life, hair is not as reflective as metal. In adittion, the helmet is implied to have a rough, less reflective texture on certain parts.";
+                button_1.innerHTML = "->";
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "Specular_7";
+            }
+            break;
+            case "Specular_5_2_2":
+            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Set_Crate_example(true);
+            d_text = "However, you can use specular lighting with normal maps to add a reflection. You can mix and match various shader methods in your code.";
+            button_1.innerHTML = "->";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Specular_5_2";
+            break;
+        case "Specular_5_2":
+            // Demo.Dialogue_Meshes_rescale(0);
+            d_text = "Other lighting methods, like on me for example, do not inherently focus on creating an illusion of what material an object is made out of.";
+            button_1.innerHTML = "Can you repeat that?";
+            button_2.innerHTML = "So it's always very reflective?";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "Specular_5";
+            break;
+        case "Specular_6":
+            d_text = "In addition, we can control how reflective and what part of the surface is reflelective using a texture called 'specular map'.";
+            button_1.innerHTML = "It that not just normal mapping?";
+            button_3.innerHTML = "How is that useful?";
+            type_letters(d_text, true, false, true, false);
+            dialogue_progression = "Specular_5";
+            break;
+        case "Specular_7":
+            Demo.Dialogue_Meshes_rescale(2);
+            Demo.configureSpecular(true, false);
+            d_text = "This is far more accurate to how it should look like. Note that we only changed where and how reflective the surface is, not the direction of the reflection!";
+            button_1.innerHTML = "I think I undertand.";
+            button_2.innerHTML = "That was simple.";
+            button_3.innerHTML = "That was complicated.";
+            type_letters(d_text, true, true, true, false);
+            dialogue_progression = "Specular_8";
+            break;
+        case "Specular_8":
+            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(31);
+            is_quiz_visable(true);
+            d_text = "You don't sound very confident about your understanding, so let's do a little test. Fill in the blanks with the correct words.";
+            button_1.innerHTML = "Check";
+            type_letters(d_text, true, false, false, false);
+            // dialogue_progression = "Specular_8";
+            break;
+        case "Specular_quiz_bad":
+            d_text = `Not quite yet. You answered ${score} out of 5 correctly.`;
+            console.log(score);
+            button_1.innerHTML = "Check";
+            type_letters(d_text, true, false, false, false);
+            break;
+        case "Specular_quiz_good":
+            d_text = "Good job! You answered everything correctly. I will not give such easy questions next time!";
+            button_1.innerHTML = "End Lesson";
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "Specular_end";
+            break;
+        case "Specular_end":
+            is_quiz_visable(false);
+            d_text = ""
+            button_1.innerHTML = ""
+            button_2.innerHTML = ""
+            type_letters(d_text, false, false, false, false);
             End_Dialogue();
             break;
             

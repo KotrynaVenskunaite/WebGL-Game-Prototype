@@ -7,17 +7,14 @@ in vec2 texCoords;
 uniform sampler2D sampler;
 uniform vec2 canvasResolution;
 
-uniform float REDxOffset;
-uniform float REDyOffset;
+const float REDxOffset = 0.05f;
+const float REDyOffset = 0.0f;
 
-uniform float GREENxOffset;
-uniform float GREENyOffset;
+const float GREENxOffset = 0.0f;
+const float GREENyOffset = 0.0f;
 
-uniform float BLUExOffset;
-uniform float BLUEyOffset;
-
-uniform bool useCA;
-uniform bool useBlur;
+const float BLUExOffset = -0.05f;
+const float BLUEyOffset = 0.0f;
 
 out vec4 fragColor;
 
@@ -49,35 +46,23 @@ vec3 Blur(vec2 uv) {
   return color;
 }
 
-vec3 chromaticAberration(vec2 uv) {
+vec3 chromaticAberration(vec2 uv, vec4 fragColor) {
   return vec3(texture(sampler, vec2(uv.x + (0.1f * REDxOffset), uv.y + (0.1f * REDyOffset))).x, texture(sampler, vec2(uv.x + (0.1f * GREENxOffset), uv.y + (0.1f * GREENyOffset))).y, texture(sampler, vec2(uv.x + (0.1f * BLUExOffset), uv.y + (0.1f * BLUEyOffset))).z);
 }
 
 void main() {
-  // vec4 texel = texture(sampler, texCoords);
+  vec4 texel = texture(sampler, texCoords);
   // float luminesence = dot(texture(sampler, texCoords).rgb, vec3(0.2f, 0.7f, 0.07f));
   // fragColor = vec4(vec3(luminesence), 1.0f);
   // fragColor = texture(sampler, texCoords);
 
-  // chromatic abberation
-  vec3 color = vec3(1.0f, 1.0f, 1.0f);
+  //chromatic abberation
+  // 
+  vec3 chromaticAberration = chromaticAberration(texCoords, texel);
+  vec3 BlurCanvas = Blur(texCoords) * 1.0f;
 
-  if(useCA == true) {
-    vec3 chromaticAberration = chromaticAberration(texCoords);
-    color = color * chromaticAberration;
-  }
-  if(useBlur == true) {
-    vec3 BlurCanvas = Blur(texCoords);
-    color = color * BlurCanvas;
-  }
-  if(useBlur == false && useCA == false) {
-    color = texture(sampler, texCoords).rgb;
-  }
-  //test case
-  // vec3 chromaticAberration = chromaticAberration(texCoords);
-  // vec3 BlurCanvas = Blur(texCoords);
   // vec3 color = chromaticAberration * BlurCanvas;
 
   //Blur
-  fragColor = vec4(color, 1.0f);
+  fragColor = vec4(chromaticAberration * BlurCanvas, 1.0f);
 }

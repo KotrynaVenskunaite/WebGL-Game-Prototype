@@ -54,22 +54,59 @@
                 <button onclick="makeNormalMap()" class ="drawing_buttons">Make Normal Map</button>
             </div>
         </div>
+
+        <div class="quiz_area">
+            <div class="sentences">
+                <div id="answer1">
+                    <span>• Specular lighting controls</span><div id="first_sentence"></div><span>intensity</span>
+                </div>
+                <div id="answer2">
+                    <span>• A texture to control reflective area is called a</span><div id="second_sentence"></div>
+                </div>
+                <div id="answer3">
+                    <span>• Specular highlight depends on the</span><div id="third_sentence"></div><span>and</span><div id="fourth_sentence"></div><span>angle</span>
+                </div>
+                <div id="answer4">
+                    <span>• Multiple shader methods</span><div id="fifth_sentence"></div><span>be used together</span>
+                </div>
+                
+            </div>
+
+            <div id="Word_area">
+                <div class="list" draggable="true">can</div>
+                <div class="list" draggable="true">object</div>
+                <div class="list" draggable="true">shadow</div>
+                <div class="list" draggable="true">reflection</div>
+                <div class="list" draggable="true">normal map</div>
+                <div class="list" draggable="true">should</div>
+                <div class="list" draggable="true">highlight</div>
+                <div class="list" draggable="true">specular map</div>
+                <div class="list" draggable="true">camera</div>
+                <div class="list" draggable="true">can't</div>
+                <div class="list" draggable="true">light</div>
+                <div class="list" draggable="true">bump map</div>
+                <div class="list" draggable="true">normal</div>
+            </div>
+            
+
+        </div>
         
         
         <!-- <i>Demo is above this text</i> -->
         
         <script src="app.js"></script>
-        <script src="util.js"></script>
         <script src="Models.js"></script>
         <script src="SceneDemo.js"></script>
         <script src="UI_controls.js"></script>
-        <script src="async.js"></script>
-        <script src="gl-matrix.js"></script>
         <script src="PostProcess.js"></script>
         <script src="drawing.js"></script>
-        
-        <script src="webglUtils.js"></script>
-        <script src="Logger.js"></script>
-        <script src="Vectors.js"></script>
+        <script src="quiz.js"></script>
+
+        <script src="3rd_party_scripts/util.js"></script>
+        <script src="3rd_party_scripts/async.js"></script>
+        <script src="3rd_party_scripts/gl-matrix.js"></script>
+        <script src="3rd_party_scripts/webglUtils.js"></script>
+        <script src="3rd_party_scripts/Logger.js"></script>
+        <script src="3rd_party_scripts/Vectors.js"></script>
     </body>
 </html>

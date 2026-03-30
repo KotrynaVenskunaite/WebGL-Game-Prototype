@@ -60,7 +60,7 @@ void main() {
   // fragColor = texture(sampler, texCoords);
 
   // chromatic abberation
-  vec3 color = vec3(1.0f, 1.0f, 1.0f);
+  vec3 color = vec3(-0.5f, 0.2f, 1.0f);
 
   if(useCA == true) {
     vec3 chromaticAberration = chromaticAberration(texCoords);

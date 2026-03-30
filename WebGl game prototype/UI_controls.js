@@ -21,7 +21,7 @@ button_4.addEventListener("click", () => vinny_dialogue_progression(4));
 document.addEventListener('click', cancelDialogue);
 
 function onButton1Click() {
-    if (dialogue_progression === "Specular_8" || dialogue_progression === "Specular_quiz_bad") {
+    if (dialogue_progression === "Specular_8_check" || dialogue_progression === "Specular_quiz_bad") {
         calc_quiz_score();
         vinny_dialogue_progression(1);
         return;
@@ -40,7 +40,7 @@ var did_skip_dialogue = false;
 var can_skip_dialogue = false;
 
 var did_learn_about_dither = false;
-var did_learn_about_normals = false;
+var did_learn_about_normals = true;
 var did_learn_about_specular = false;
 
 
@@ -119,19 +119,19 @@ function Begin_Dialogue(name){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
-            dialogue_progression = "Dither_end"
+            dialogue_progression = "END_DIALOGUE"
         }
         else if (name == "Vinny_2" && did_learn_about_normals == true){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
-            dialogue_progression = "Normal_Map_end"
+            dialogue_progression = "END_DIALOGUE"
         }
         else if (name == "Vinny_3" && did_learn_about_specular == true){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
-            dialogue_progression = "Specular_end"
+            dialogue_progression = "END_DIALOGUE"
         }
         else if(language == "eng" && name == "Vincent")
         {
@@ -142,7 +142,7 @@ function Begin_Dialogue(name){
             d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise"
             button_1.innerHTML = "Okay."
             button_2.innerHTML = "Later then."
-            dialogue_progression = "Specular_end";
+            dialogue_progression = "END_DIALOGUE";
         }
         // else if(name == "Vinny_2" && dialogue_progression != "dither_end")
         // {
@@ -699,7 +699,7 @@ function vinny_dialogue_progression(buttonNumber){
             d_text = "You don't sound very confident about your understanding, so let's do a little test. Fill in the blanks with the correct words.";
             button_1.innerHTML = "Check";
             type_letters(d_text, true, false, false, false);
-            // dialogue_progression = "Specular_8";
+            dialogue_progression = "Specular_8_check";
             break;
         case "Specular_quiz_bad":
             d_text = `Not quite yet. You answered ${score} out of 5 correctly.`;
@@ -719,6 +719,13 @@ function vinny_dialogue_progression(buttonNumber){
             d_text = ""
             button_1.innerHTML = ""
             button_2.innerHTML = ""
+            type_letters(d_text, false, false, false, false);
+            End_Dialogue();
+            break;
+            
+        case "END_DIALOGUE":
+            d_text = ""
+            button_1.innerHTML = ""
             type_letters(d_text, false, false, false, false);
             End_Dialogue();
             break;

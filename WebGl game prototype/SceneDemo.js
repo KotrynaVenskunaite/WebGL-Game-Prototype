@@ -983,7 +983,7 @@ DemoScene.prototype.Load = function (cb){
         me.BLUExOffset = -0.05;
         me.BLUEyOffset = 0.0;
 
-        me.useChromatic = false;
+        me.useChromatic = true;
         me.useBlur = false;
 
 

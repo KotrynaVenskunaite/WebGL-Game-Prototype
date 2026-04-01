@@ -268,7 +268,7 @@ DemoScene.prototype.Load = function (cb){
             BoxModel.meshes[0].normals,
             BoxModel.meshes[0].texturecoords[0],
             tangents,
-            me.Cube_Texture,
+            me.Specular_Base_Texture,
             box_color,
             'Box'
         );
@@ -679,6 +679,38 @@ DemoScene.prototype.Load = function (cb){
                         glMatrix.vec4.fromValues(7, 0, 0)
                     );
 
+                    //3rd
+                    me.Vinny_Overworld_Plaacegolder_3_CrossArms = new Model(
+                        me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vinny_Texture,
+                        outline_color,
+                        'Vinny_4'
+                    );
+                    glMatrix.mat4.scale(
+                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                        me.vinny_scale
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+                    );
+                    glMatrix.mat4.translate(
+                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                        glMatrix.vec4.fromValues(9, 0, 0)
+                    );
+
                     //PLACEHOLDER END
 					break;
 				case 'Outline':
@@ -921,6 +953,10 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Vincent outline crossed arms mesh');
             return;
         }
+        if(!me.Vinny_Overworld_Plaacegolder_3_CrossArms){
+            cb('failed to load Vincent outline crossed arms mesh');
+            return;
+        }
         if(!me.Ornstein){
             cb('failed to load Ornstein mesh');
             return;
@@ -931,7 +967,7 @@ DemoScene.prototype.Load = function (cb){
         }
         
         // VARIABLES
-        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms, me.Vinny_Overworld_Plaacegolder_2_CrossArms];
+        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms, me.Vinny_Overworld_Plaacegolder_2_CrossArms, me.Vinny_Overworld_Plaacegolder_3_CrossArms];
         me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms];
         me.Dialogue_Meshes = [
             me.Vinny_Crossed_arms, me.Vinny_Outline_crossed_arms,
@@ -974,6 +1010,7 @@ DemoScene.prototype.Load = function (cb){
         me.specular_intensity = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
         me.specular_swich = 1;
         me.enable_specular_demonstration = false;
+       
 
         //Post process variables
         me.REDxOffset = 0.05;
@@ -982,10 +1019,14 @@ DemoScene.prototype.Load = function (cb){
         me.GREENyOffset = 0.0;
         me.BLUExOffset = -0.05;
         me.BLUEyOffset = 0.0;
+        me.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+        me.enable_brightness_shift = false;
 
         me.useChromatic = true;
-        me.useBlur = false;
+        me.useBlur = true;
+        me.useDither = true;
 
+        me.mousePos = glMatrix.vec2.fromValues(0.0, 0.0);
 
         //
         // Create Shaders
@@ -1122,15 +1163,18 @@ DemoScene.prototype.Load = function (cb){
 
             sampler: me.gl.getUniformLocation(me.PostProcessProgram, 'sampler'),
             canvasResolution: me.gl.getUniformLocation(me.PostProcessProgram, 'canvasResolution'),
-
+            windowResolution: me.gl.getUniformLocation(me.PostProcessProgram, 'windowResolution'),
             REDxOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'REDxOffset'),
             REDyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'REDyOffset'),
             GREENxOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'GREENxOffset'),
             GREENyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'GREENyOffset'),
             BLUExOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'BLUExOffset'),
             BLUEyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'BLUEyOffset'),
+            colorChanels: me.gl.getUniformLocation(me.PostProcessProgram, 'colorChanels'),
 
             useCA: me.gl.getUniformLocation(me.PostProcessProgram, 'useCA'),
+            useDither: me.gl.getUniformLocation(me.PostProcessProgram, 'useDither'),
+            mousePos: me.gl.getUniformLocation(me.PostProcessProgram, 'mousePos'),
             useBlur: me.gl.getUniformLocation(me.PostProcessProgram, 'useBlur')
         };
 
@@ -1242,10 +1286,12 @@ DemoScene.prototype.Begin = function (){
     this.__ResizeWindowListener = this._OnResizeWindow.bind(this);
     this.__KeyDownListener = this._onKeyDown.bind(this);
     this.__KeyUpListener = this._onKeyUp.bind(this);
+    this.__MouseMoveListener = this._onMouseMove.bind(this);
 
     AddEvent(window, 'resize', this.__ResizeWindowListener);
     AddEvent(window, 'keydown', this.__KeyDownListener);
     AddEvent(window, 'keyup', this.__KeyUpListener);
+    AddEvent(window, 'mousemove', this.__MouseMoveListener);
 
     // Render Loop
     var previuousFrame = performance.now();
@@ -1361,6 +1407,30 @@ DemoScene.prototype._Update = function (dt) {
             }
         }
     }
+
+    // brightness shift
+    if(this.enable_brightness_shift == true){
+        console.log("brighness should shift: " + this.PP_ColorChanels)
+        const brightness_change_rate = 1.3;
+        const brightness_change = brightness_change_rate * (dt/1000)
+
+        if(this.PP_ColorChanels[0] >= 3.0){
+            this.brightness_switch = 0;
+        }
+        if(this.PP_ColorChanels[0] <= 0.5){
+            this.brightness_switch = 1;
+        }
+        // console.log(this.brightness_switch);
+        if (this.brightness_switch == 0){
+            for (let i = 0; i < 3; i++) {
+                this.PP_ColorChanels[i] -= brightness_change;
+            }
+        }else{
+            for (let i = 0; i < 3; i++) {
+                this.PP_ColorChanels[i] += brightness_change;
+            }
+        }
+    }
     
     
    
@@ -1459,10 +1529,16 @@ DemoScene.prototype._PostProcess = function(){
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, framebufferTexture);
     gl.uniform1i(this.PostProcessProgram.uniforms.sampler, 0);
+    gl.uniform3fv(this.PostProcessProgram.uniforms.colorChanels, this.PP_ColorChanels);
     gl.uniform2f(
         this.PostProcessProgram.uniforms.canvasResolution,
         this.textureWidth,
         this.textureHeight
+    );
+    gl.uniform2f(
+        this.PostProcessProgram.uniforms.windowResolution,
+        window.innerWidth,
+        window.innerHeight
     );
     //offsets
     gl.uniform1f(this.PostProcessProgram.uniforms.REDxOffset, this.REDxOffset);
@@ -1471,9 +1547,15 @@ DemoScene.prototype._PostProcess = function(){
     gl.uniform1f(this.PostProcessProgram.uniforms.GREENyOffset, this.GREENyOffset);
     gl.uniform1f(this.PostProcessProgram.uniforms.BLUExOffset, this.BLUExOffset);
     gl.uniform1f(this.PostProcessProgram.uniforms.BLUEyOffset, this.BLUEyOffset);
+    gl.uniform2f(
+        this.PostProcessProgram.uniforms.mousePos,
+        this.mousePos.x,
+        this.mousePos.y
+    );
 
     //on/off shaders
     gl.uniform1i(this.PostProcessProgram.uniforms.useCA, this.useChromatic);
+    gl.uniform1i(this.PostProcessProgram.uniforms.useDither, this.useDither);
     gl.uniform1i(this.PostProcessProgram.uniforms.useBlur, this.useBlur);
 
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
@@ -2243,4 +2325,12 @@ DemoScene.prototype.changeNormalShaderRenderResult = function(newShaderIndicator
 DemoScene.prototype.configureSpecular = function (spec_map, enable_rotation){
     this.use_spec_map = spec_map;
     this.enable_specular_demonstration = enable_rotation;
+}
+DemoScene.prototype._onMouseMove = function (){
+    let rect = canvas.getBoundingClientRect();
+    this.mousePos.x = event.clientX - rect.left;
+    this.mousePos.y = event.clientY - rect.top;
+
+    // console.log("Coordinate x: " + this.mousePos.x, "Coordinate y: " + this.mousePos.y);
+
 }

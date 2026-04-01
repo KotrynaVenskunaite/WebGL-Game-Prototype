@@ -54,7 +54,7 @@ function InitiateConversation(name, can_start_convo, is_starting) {
     // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
     //     return;
     // }
-    if (name != "Vinny_2" && name != "Vincent" && name != "Vinny_3"){
+    if (name != "Vinny_2" && name != "Vincent" && name != "Vinny_3" && name != "Vinny_4"){
         return;
     }
     // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);
@@ -133,9 +133,10 @@ function Begin_Dialogue(name){
             button_2.innerHTML = "I did not"
             dialogue_progression = "END_DIALOGUE"
         }
+       
         else if(language == "eng" && name == "Vincent")
         {
-            d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding."
+            d_text = "And when you finally saw it come it passed you by and left you so defeated"
             dialogue_progression = 0;
         }
         else if (name == "Vinny_3" && did_learn_about_normals == false){
@@ -157,17 +158,17 @@ function Begin_Dialogue(name){
             button_2.innerHTML = "You look nice!"
             dialogue_progression = "Normal_Map_Start"
         }
-        // else if (name == "Vincent"){
-        //     d_text = "Sveikas! Aš kaip tik skaičiau apie technikas naudojamas spalvų juostavimuisi sutvarkyti."
-        // }
-        // else if (name == "Vincent"){
-        //     d_text = "Sveikas! Aš kaip tik skaičiau apie technikas naudojamas spalvų juostavimuisi sutvarkyti."
-        // }
         else if (name == "Vinny_3" && did_learn_about_normals == true){
             d_text = "Oh, you are done talking to the others? Then it is my turn to shine!"
             button_1.innerHTML = "Indeed."
             button_2.innerHTML = "Let's start."
             dialogue_progression = "Specular_start";
+        }
+        else if (name == "Vinny_4"){
+            d_text = "Let's move on to something completely different, shall we?"
+            button_1.innerHTML = "completely different?"
+            button_2.innerHTML = "Let's!"
+            dialogue_progression = "PostProcess_start";
         }
         type_letters(d_text, true, true, false, false);
     }, 3000);
@@ -722,7 +723,120 @@ function vinny_dialogue_progression(buttonNumber){
             type_letters(d_text, false, false, false, false);
             End_Dialogue();
             break;
+
+        // POST PROCESS
+        case "PostProcess_start":
+            d_text = "Let's take a step back. So far we have only talked about shaders. One's that only apply to each individual 3D object in the scene."
+            button_1.innerHTML = "Yeah, so?"
+            button_2.innerHTML = "Are there more?"
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "PostProcess_1";
+            break;
+        case "PostProcess_1":
+            d_text = "All those shaders contribute to one final image, like the one you see on your screen now, and sometimes, that final image is simply not satisfactory."
+            button_1.innerHTML = "->"
+            type_letters(d_text, true, false, false, false);
+            dialogue_progression = "PostProcess_2";
+            break;
+        case "PostProcess_2":
+            d_text = "One may want to add an extra effect on everything at once. Perhaps the brightness is a little too low, or we want to blur the corners of an image a little."
+            button_1.innerHTML = "Like a paint over?"
+            button_2.innerHTML = "So an image correction!"
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "PostProcess_3";
+            break;
+        case "PostProcess_3":
+            d_text = "In computer graphics, this final image manipulation is called 'Post-processing'."
+            button_1.innerHTML = "Can you give an example?"
+            button_2.innerHTML = "Do a demonstration!"
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "PostProcess_4";
+            break;
+        case "PostProcess_4":
+            d_text = "Ok, let's do something simple. all images contain RED, GREEN and BLUE colors (shortened to RGB). We can remove one of those colors, so pick one."
+            button_1.innerHTML = "Remove RED";
+            button_1.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(0.0, 1.0, 1.0); }
+
+            button_2.innerHTML = "Remove GREEN";
+            button_2.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 0.0, 1.0); }
+
+            button_3.innerHTML = "Remove BLUE";
+            button_3.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 0.0); }
+
+            button_4.innerHTML = "->";
+            button_4.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0); }
+
+            type_letters(d_text, true, true, true, true);
+            dialogue_progression = "PostProcess_5";
+            break;
+
+        case "PostProcess_5":
+            let removedColorName;
+            let HueName;
+            if(buttonNumber == 1){ removedColorName = "RED"; HueName = "cyan"}
+            if(buttonNumber == 2){ removedColorName = "GREEN"; HueName = "magenta"}
+            if(buttonNumber == 3){ removedColorName = "BLUE"; HueName = "yellow"}
+            if(buttonNumber != 4){
+                d_text = `With the removal of the color ${removedColorName}, the other two colors create a ${HueName} hue.`;
+                button_1.innerHTML = "Remove RED";
+                button_1.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(0.0, 1.0, 1.0); }
+
+                button_2.innerHTML = "Remove GREEN";
+                button_2.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 0.0, 1.0); }
+
+                button_3.innerHTML = "Remove BLUE";
+                button_3.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 0.0); }
+
+                button_4.innerHTML = "->";
+                button_4.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0); Demo.useChromatic = true; Demo.useBlur = true; }
+
+                type_letters(d_text, true, true, true, true);
+                dialogue_progression = "PostProcess_5";
+            }else{
+                d_text = "Using the three color chanels, we can also create a chromaatic aberration effect. Try moving your mouse around to see it in effect.";
+                button_1.innerHTML = "What is chromatic aberration?";
+                button_2.innerHTML = "What else can we do?";
+
+                type_letters(d_text, true, true, false, false);
+                dialogue_progression = "PostProcess_6";
+            }
+            break;
             
+        case "PostProcess_6":
+            button_1.onclick = null;
+            button_2.onclick = null;
+            button_3.onclick = null;
+            button_4.onclick = null;
+            if(buttonNumber == 1){
+                dither_image.style.display = "flex";
+                document.getElementById("image_window").src = "textures/Chromatic_aberration_comparison.jpg";
+                d_text = "Chromatic aberration is what happens when a camera lens fails to focus all colors into the same point, creating a blur with a rainbow hue at the unfocused area of that image.";
+                button_1.innerHTML = "->";
+
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "PostProcess_6_2";
+            }else{
+                dither_image.style.display = "none";
+                d_text = "";
+                button_1.innerHTML = "What is chromatic aberration?";
+                button_2.innerHTML = "What else can we do?";
+
+                type_letters(d_text, true, true, false, false);
+                dialogue_progression = "PostProcess_6";
+            }
+            break;
+        case "PostProcess_6_2":
+            document.getElementById("image_window").src = "textures/prismdiag.png";
+            d_text = "It's caused by dispersion - when a white light disperses into different wavelengths, aka different colors!";
+            button_1.innerHTML = "Can you repeat that?";
+            button_2.innerHTML = "What else can we do?";
+
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "PostProcess_6";
+            break;
+        
+            
+        //END    
         case "END_DIALOGUE":
             d_text = ""
             button_1.innerHTML = ""

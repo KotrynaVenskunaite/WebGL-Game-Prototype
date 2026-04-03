@@ -87,8 +87,40 @@
                 <div class="list" draggable="true">bump map</div>
                 <div class="list" draggable="true">normal</div>
             </div>
-            
 
+        </div>
+
+        <div class="PP_game_area" unselectable="on">
+            <div class="RGB_area">
+                <div id="R_area" class="RGB_individual_areas">
+                    <div class = "RGB_button" id="R_button">R</div>
+                    <div class = "RGB_control" id="R_plus">+</div>
+                    <div class = "RGB_control" id="R_minus">-</div>
+                </div>
+                <div id="G_area" class="RGB_individual_areas">
+                    <div class = "RGB_button" id="G_button">G</div>
+                    <div class = "RGB_control" id="G_plus">+</div>
+                    <div class = "RGB_control" id="G_minus">-</div>
+                </div>
+                <div id="B_area" class="RGB_individual_areas">
+                    <div class = "RGB_button" id="B_button">B</div>
+                    <div class = "RGB_control" id="B_plus">+</div>
+                    <div class = "RGB_control" id="B_minus">-</div>
+                </div>
+
+            </div>
+            <div class="boolean_options_area">
+                <div class="CBG_buttons">
+                    <div class = "CBG_individual" id="CA">Chromatic aberration</div>
+                    <div class = "CBG_individual" id="Blur">Blur</div>
+                    <div class = "CBG_individual" id="Grayscale">Grayscale</div>
+                </div>
+                <div class="dither_area">
+                    <div class = "CBG_individual" id="dither">Dither</div>
+                    <div class = "CBG_individual" id="dither_color">Color</div>
+                </div>
+                
+            </div>
         </div>
         
         
@@ -100,6 +132,7 @@
         <script src="UI_controls.js"></script>
         <script src="PostProcess.js"></script>
         <script src="drawing.js"></script>
+        <script src="post_process_control.js"></script>
         <script src="quiz.js"></script>
 
         <script src="3rd_party_scripts/util.js"></script>

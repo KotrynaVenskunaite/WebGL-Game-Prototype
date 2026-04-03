@@ -1024,7 +1024,7 @@ DemoScene.prototype.Load = function (cb){
 
         me.useChromatic = false;
         me.useBlur = false;
-        me.useDither = true;
+        me.useDither = false;
         me.useSobel = false;
         me.useColor = true;
 

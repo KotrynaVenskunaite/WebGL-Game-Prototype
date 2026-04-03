@@ -68,7 +68,11 @@
     background-color: rgba(162, 22, 22, 0);
 
     padding: 3%;
-    gap: 4%; /
+    gap: 4%; 
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 
@@ -318,6 +322,152 @@
     align-items: center;
 }
 
+/* Post process */
+.PP_game_area{
+    /* border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459); */
+
+    /* width: 240px; */
+    /* width: 10%; */
+    width: 30vmin;
+    height: 30vmin;
+    /* aspect-ratio: 2/1; */
+
+    top: 20%;
+    left: 70%;
+
+    transform: translate(-50%, -50%);
+
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 3%;
+    justify-content: center;
+    align-items: center;
+
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+
+    /* display: none; */
+}
+
+.RGB_area{
+    /* border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459); */
+
+    width: 60%;
+    aspect-ratio: 2/1;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.RGB_individual_areas{
+    /* border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459); */
+
+    flex: 1;
+    /* width: 30%; */
+    height: 100%;
+    aspect-ratio: 1/2.5;
+
+    display: flex;
+    flex-direction: column;
+    gap:3%;
+    justify-content: center;
+    align-items: center;
+}
+
+.RGB_button{
+    border: 3px solid rgb(255, 255, 255);
+    /* background-color: rgba(173, 58, 58, 0.459); */
+    /* width: 80%; */
+    flex: 1;
+    aspect-ratio: 1/1;
+    max-height: 30%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+}
+
+.RGB_control{
+    border: 3px solid rgb(255, 255, 255);
+    /* background-color: rgba(173, 58, 58, 0.459); */
+    /* width: 60%; */
+    flex: 1;
+    aspect-ratio: 1/1;
+    max-width: 50%;
+    max-height: 20%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    font-weight: 900;
+}
+
+.boolean_options_area{
+    /* border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459); */
+
+    width: 80%;
+    aspect-ratio: 3/1;
+
+    display: flex; 
+    gap:3%;
+    flex-direction: column; 
+}
+
+.CBG_buttons{
+    /* border: 3px solid rgb(255, 255, 255); */
+    /* background-color: rgba(173, 58, 58, 0.459); */
+    flex: 1;  
+    gap: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.CBG_individual{
+    border: 3px solid rgb(255, 255, 255);
+    /* background-color: rgba(173, 58, 58, 0.459); */
+    flex: 1;
+    /* aspect-ratio: 2/1; */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+.dither_area{
+    /* border: 3px solid rgb(255, 255, 255);
+    background-color: rgba(173, 58, 58, 0.459); */
+    flex: 1; 
+    gap: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#R_button{
+    color: red;
+}
+#G_button{
+    color: green;
+}
+#B_button{
+    color: blue;
+}
+#R_area, #G_area{
+    border-right: 3px solid white;
+}
 
 /* IRIS */
 

@@ -39,15 +39,15 @@ out vec4 fragColor;
 //vec4 lum = vec4(0.2126f, 0.7152f, 0.0722f, 0);
 vec4 lum = vec4(0.299f, 0.587f, 0.114f, 0);
 
-// const int dither_matrix_2x2[16] = int[](0, 8, 2, 18, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
-const int dither_matrix_2x2[4] = int[](0, 3, 2, 1);
+const int dither_matrix_2x2[16] = int[](0, 8, 2, 18, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
+// const int dither_matrix_2x2[4] = int[](0, 3, 2, 1);
 
 vec3 Blur(vec2 uv) {
   const float Pi = 6.28318530718f; // Pi*2
   // GAUSSIAN BLUR SETTINGS {{{
   const float Directions = 16.0f; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
   const float Quality = 4.0f; // BLUR QUALITY (Default 4.0 - More is better but slower)
-  const float Size = 6.0f; // BLUR SIZE (Radius)
+  const float Size = 2.0f; // BLUR SIZE (Radius)
   // GAUSSIAN BLUR SETTINGS }}}
   vec2 Radius = Size / canvasResolution;
 
@@ -146,7 +146,7 @@ void main() {
   vec3 color = colorChanels;
 
   if(useCA == true && useBlur == true) {
-    color *= mix(chromaticAberration, BlurCanvas, 0.5f);
+    color = mix(chromaticAberration * color, BlurCanvas, 0.5f);
   } else if(useCA == true) {
     color = color * chromaticAberration;
   } else if(useBlur == true) {
@@ -165,8 +165,11 @@ void main() {
   // fragColor.rgb = colorChanels;
   // fragColor = fragColor * texture(sampler, texCoords);
   // fragColor.rgb = fragColor.rgb * chromaticAberration;
-  float grayscale = dot(texture(sampler, texCoords), lum);
+  float grayscale = dot(color.rgb, lum.rgb);
   vec3 dither = vec3(dither2x2(gl_FragCoord.xy, grayscale));
+  if(useColor == false && useDither == false) {
+    color = vec3(grayscale);
+  }
 
   // float thresholded = dither2x2(texCoords, grayscale + ((rand(texCoords) / 9.0f)));
 
@@ -181,7 +184,7 @@ void main() {
     if(useColor == true) {
       color *= mix(edge, dither, 0.5f);
     } else {
-      color = mix(edge, dither, 0.5f);
+      color = mix(edge, dither * edge, 0.5f);
     }
   } else if(useSobel == true) {
     if(useColor == true) {
@@ -191,7 +194,8 @@ void main() {
     }
   } else if(useDither == true) {
     if(useColor == true) {
-      color *= mix(color, dither, 0.5f);
+      // color = color * dither;
+      color *= mix(color, dither, 0.5f); //Does not work on linux and other maby other PCs (with 2x2 and 4/16 parameters, looks the best tho)
     } else {
       color = dither;
     }

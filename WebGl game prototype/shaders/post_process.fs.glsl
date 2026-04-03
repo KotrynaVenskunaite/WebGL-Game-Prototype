@@ -25,6 +25,8 @@ uniform vec3 colorChanels;
 uniform bool useCA;
 uniform bool useBlur;
 uniform bool useDither;
+uniform bool useSobel;
+uniform bool useColor;
 
 uniform vec2 mousePos;
 
@@ -34,7 +36,9 @@ float grainMultiplier = 1.2f;
 out vec4 fragColor;
 
 //dither variables 
-vec4 lum = vec4(0.2126f, 0.7152f, 0.0722f, 0);
+//vec4 lum = vec4(0.2126f, 0.7152f, 0.0722f, 0);
+vec4 lum = vec4(0.299f, 0.587f, 0.114f, 0);
+
 // const int dither_matrix_2x2[16] = int[](0, 8, 2, 18, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
 const int dither_matrix_2x2[4] = int[](0, 3, 2, 1);
 
@@ -87,11 +91,11 @@ vec3 chromaticAberration(vec2 uv) {
 }
 
 float dither2x2(vec2 uv, float luma) {
-  float dither_amount = 2.0f;
+  float dither_amount = 4.0f;
   int x = int(mod(uv.x, dither_amount));
   int y = int(mod(uv.y, dither_amount));
   int index = x + y * int(dither_amount);
-  float limit = (float(dither_matrix_2x2[index]) + 1.0f) / (1.0f + 4.0f);
+  float limit = (float(dither_matrix_2x2[index]) + 1.0f) / (1.0f + 16.0f);
   return luma < limit ? 0.0f : 1.0f;
 }
 
@@ -112,11 +116,30 @@ float rand(vec2 uv) {
   return fract(sin(dot(uv.xy, vec2(12.9898f, 78.233f))) * 43758.5453f);
 }
 
+float intensity(in vec4 incolor) {
+  return sqrt((incolor.x * incolor.x) + (incolor.y * incolor.y) + (incolor.z * incolor.z));
+}
+
+vec3 sobel_edge_detect(float x, float y, vec2 mainPixel) {
+  float tleft = intensity(texture(sampler, mainPixel + vec2(-x, y)));
+  float left = intensity(texture(sampler, mainPixel + vec2(-x, 0)));
+  float bleft = intensity(texture(sampler, mainPixel + vec2(-x, -y)));
+  float top = intensity(texture(sampler, mainPixel + vec2(0, y)));
+  float bottom = intensity(texture(sampler, mainPixel + vec2(0, -y)));
+  float tright = intensity(texture(sampler, mainPixel + vec2(x, y)));
+  float right = intensity(texture(sampler, mainPixel + vec2(x, 0)));
+  float bright = intensity(texture(sampler, mainPixel + vec2(x, -y)));
+
+  float gx = tleft + 2.0f * left + bleft - tright - 2.0f * right - bright;
+  float gy = -left - 2.0f * top - tright + bleft + 2.0f * bottom + bright;
+
+  float threshold = 0.85f;
+  float color = sqrt((gx * gx) + (gy * gy));
+  float edge = step(threshold, color); // 0 or 1
+  return vec3(edge, edge, edge);
+}
+
 void main() {
-  // vec4 texel = texture(sampler, texCoords);
-  // float luminesence = dot(texture(sampler, texCoords).rgb, vec3(0.2f, 0.7f, 0.07f));
-  // fragColor = vec4(vec3(luminesence), 1.0f);
-  // fragColor = texture(sampler, texCoords);
 
   vec3 chromaticAberration = chromaticAberration(texCoords);
   vec3 BlurCanvas = Blur(texCoords);
@@ -142,16 +165,37 @@ void main() {
   // fragColor.rgb = colorChanels;
   // fragColor = fragColor * texture(sampler, texCoords);
   // fragColor.rgb = fragColor.rgb * chromaticAberration;
-  float grayscale = dot(color, lum.rgb);
+  float grayscale = dot(texture(sampler, texCoords), lum);
   vec3 dither = vec3(dither2x2(gl_FragCoord.xy, grayscale));
-  if(useDither == true) {
-    color = color * dither;
-  } 
 
   // float thresholded = dither2x2(texCoords, grayscale + ((rand(texCoords) / 9.0f)));
 
   // fragColor = vec4(vec3(thresholded), 1.0f);
-  fragColor = vec4(color, 1.0f);
+  //  fragColor = vec4(vec3(grayscale), 1.0f);
   // fragColor = vec4(fragColor.r * dither2x2(gl_FragCoord.xy, grayscale), fragColor.g * dither2x2(gl_FragCoord.xy, grayscale), fragColor.b * dither2x2(gl_FragCoord.xy, grayscale), 1.0f);
   // fragColor = vec4(color * dither, 1.0f);
+  float step = 1.0f;
+  vec3 edge = sobel_edge_detect(step / canvasResolution[0], step / canvasResolution[1], texCoords);
+  //sobel operator
+  if(useSobel == true && useDither == true) {
+    if(useColor == true) {
+      color *= mix(edge, dither, 0.5f);
+    } else {
+      color = mix(edge, dither, 0.5f);
+    }
+  } else if(useSobel == true) {
+    if(useColor == true) {
+      color *= mix(color, edge, 0.5f);//0.3f
+    } else {
+      color = edge;
+    }
+  } else if(useDither == true) {
+    if(useColor == true) {
+      color *= mix(color, dither, 0.5f);
+    } else {
+      color = dither;
+    }
+  }
+
+  fragColor = vec4(color, 1.0f);
 }

@@ -817,7 +817,7 @@ function vinny_dialogue_progression(buttonNumber){
                 dialogue_progression = "PostProcess_6_2";
             }else{
                 dither_image.style.display = "none";
-                d_text = "";
+                d_text = "We can also adjust brighness!";
                 button_1.innerHTML = "What is chromatic aberration?";
                 button_2.innerHTML = "What else can we do?";
 

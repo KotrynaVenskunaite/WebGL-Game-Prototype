@@ -1022,9 +1022,11 @@ DemoScene.prototype.Load = function (cb){
         me.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
         me.enable_brightness_shift = false;
 
-        me.useChromatic = true;
-        me.useBlur = true;
+        me.useChromatic = false;
+        me.useBlur = false;
         me.useDither = true;
+        me.useSobel = false;
+        me.useColor = true;
 
         me.mousePos = glMatrix.vec2.fromValues(0.0, 0.0);
 
@@ -1174,6 +1176,8 @@ DemoScene.prototype.Load = function (cb){
 
             useCA: me.gl.getUniformLocation(me.PostProcessProgram, 'useCA'),
             useDither: me.gl.getUniformLocation(me.PostProcessProgram, 'useDither'),
+            useSobel: me.gl.getUniformLocation(me.PostProcessProgram, 'useSobel'),
+            useColor: me.gl.getUniformLocation(me.PostProcessProgram, 'useColor'),
             mousePos: me.gl.getUniformLocation(me.PostProcessProgram, 'mousePos'),
             useBlur: me.gl.getUniformLocation(me.PostProcessProgram, 'useBlur')
         };
@@ -1557,6 +1561,8 @@ DemoScene.prototype._PostProcess = function(){
     gl.uniform1i(this.PostProcessProgram.uniforms.useCA, this.useChromatic);
     gl.uniform1i(this.PostProcessProgram.uniforms.useDither, this.useDither);
     gl.uniform1i(this.PostProcessProgram.uniforms.useBlur, this.useBlur);
+    gl.uniform1i(this.PostProcessProgram.uniforms.useSobel, this.useSobel);
+    gl.uniform1i(this.PostProcessProgram.uniforms.useColor, this.useColor);
 
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
 

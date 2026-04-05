@@ -20,6 +20,11 @@ uniform float BLUEyOffset;
 
 //color correction
 uniform vec3 colorChanels;
+uniform vec3 edgeColor;
+
+//Duotone
+uniform vec3 DuotoneLight;
+uniform vec3 DuotoneDark;
 
 // shader in use variables
 uniform bool useCA;
@@ -27,11 +32,10 @@ uniform bool useBlur;
 uniform bool useDither;
 uniform bool useSobel;
 uniform bool useColor;
+uniform bool useDuotone;
+uniform bool useThreshold;
 
 uniform vec2 mousePos;
-
-//temporary test
-float grainMultiplier = 1.2f;
 
 out vec4 fragColor;
 
@@ -47,7 +51,7 @@ vec3 Blur(vec2 uv) {
   // GAUSSIAN BLUR SETTINGS {{{
   const float Directions = 16.0f; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
   const float Quality = 4.0f; // BLUR QUALITY (Default 4.0 - More is better but slower)
-  const float Size = 2.0f; // BLUR SIZE (Radius)
+  const float Size = 3.0f; // BLUR SIZE (Radius)
   // GAUSSIAN BLUR SETTINGS }}}
   vec2 Radius = Size / canvasResolution;
 
@@ -133,10 +137,18 @@ vec3 sobel_edge_detect(float x, float y, vec2 mainPixel) {
   float gx = tleft + 2.0f * left + bleft - tright - 2.0f * right - bright;
   float gy = -left - 2.0f * top - tright + bleft + 2.0f * bottom + bright;
 
-  float threshold = 0.85f;
+  float threshold = 0.7f; //85
   float color = sqrt((gx * gx) + (gy * gy));
-  float edge = step(threshold, color); // 0 or 1
-  return vec3(edge, edge, edge);
+  float edge = step(threshold, color) * color; // 0 or 1
+
+  if(useThreshold == true) {
+    return vec3(edge, edge, edge);
+  }
+  return vec3(color, color, color);
+}
+
+float vignette(vec2 uv, float radius) {
+  return radius - distance(uv, vec2(0.5f));
 }
 
 void main() {
@@ -170,6 +182,14 @@ void main() {
   if(useColor == false && useDither == false) {
     color = vec3(grayscale);
   }
+  if(useDuotone == true) {
+    vec3 lumFactor = vec3(0.2126f, 0.7152f, 0.0722f);
+    vec3 rgb = vec3(dot(color, lumFactor));
+    vec3 duoD = DuotoneDark;
+    vec3 duotT = DuotoneLight;
+    //vignette(texCoords, 0.5f)
+    color = mix(duoD, duotT, rgb);
+  }
 
   // float thresholded = dither2x2(texCoords, grayscale + ((rand(texCoords) / 9.0f)));
 
@@ -179,6 +199,9 @@ void main() {
   // fragColor = vec4(color * dither, 1.0f);
   float step = 1.0f;
   vec3 edge = sobel_edge_detect(step / canvasResolution[0], step / canvasResolution[1], texCoords);
+  edge *= edgeColor; //edge boost
+  // edge = color * (1.0f - edge * 1.0f);
+  // edge *= -1.0f;
   //sobel operator
   if(useSobel == true && useDither == true) {
     if(useColor == true) {
@@ -188,7 +211,8 @@ void main() {
     }
   } else if(useSobel == true) {
     if(useColor == true) {
-      color *= mix(color, edge, 0.5f);//0.3f
+      // color += mix(color, edge, 0.5f);//0.3f
+      color += edge;
     } else {
       color = edge;
     }
@@ -201,5 +225,8 @@ void main() {
     }
   }
 
+  // color = color * texture(sampler, texCoords).rgb; //increase/decrease saturaion, dither looks bit better
+
+  // color = grayscale * duot;
   fragColor = vec4(color, 1.0f);
 }

@@ -6,6 +6,8 @@ const dialogue_name = document.getElementById("dialog_name");
 const dialogue_box = document.getElementById("dialogue_box");
 const dither_image = document.getElementById("dither_image");
 
+const pp_controller = document.getElementsByClassName("PP_game_area");
+
 
 const buttons = document.getElementById("dialog_buttons");
 const button_1 = document.getElementById("button_1");
@@ -26,6 +28,27 @@ function onButton1Click() {
         vinny_dialogue_progression(1);
         return;
     }
+    if (dialogue_progression === "PostProcess_game_1"){
+        if(pp_ornstein() == true){
+            console.log("passed quest one");
+            dialogue_progression = "PostProcess_11";
+        }
+        // vinny_dialogue_progression(1);
+    }
+    if (dialogue_progression === "PostProcess_game_2"){
+        if(pp_gojo() == true){
+            console.log("passed quest two");
+            dialogue_progression = "PostProcess_12";
+        }
+        // vinny_dialogue_progression(1);
+    }
+    if (dialogue_progression === "PostProcess_game_3"){
+        if(pp_vinny() == true){
+            console.log("passed quest two");
+            dialogue_progression = "PostProcess_13";
+        }
+        // vinny_dialogue_progression(1);
+    }
 
     vinny_dialogue_progression(1);
 }
@@ -42,6 +65,8 @@ var can_skip_dialogue = false;
 var did_learn_about_dither = false;
 var did_learn_about_normals = true;
 var did_learn_about_specular = false;
+var did_learn_about_pp = false;
+var did_learn_about_sobel = false;
 
 
 img.src = 'textures/f_key.png';
@@ -54,7 +79,7 @@ function InitiateConversation(name, can_start_convo, is_starting) {
     // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
     //     return;
     // }
-    if (name != "Vinny_2" && name != "Vincent" && name != "Vinny_3" && name != "Vinny_4"){
+    if (name != "Vinny_2" && name != "Vincent" && name != "Vinny_3" && name != "Vinny_4" && name != "Vinny_5"){
         return;
     }
     // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);
@@ -133,6 +158,19 @@ function Begin_Dialogue(name){
             button_2.innerHTML = "I did not"
             dialogue_progression = "END_DIALOGUE"
         }
+        else if (name == "Vinny_4" && did_learn_about_pp == true){
+            d_text = "I hope you enjoyed this little lesson!"
+            button_1.innerHTML = "I did!"
+            button_2.innerHTML = "I did not"
+            dialogue_progression = "END_DIALOGUE"
+        }
+        else if (name == "Vinny_5" && did_learn_about_sobel == true){
+            d_text = "I hope you enjoyed this little lesson!"
+            button_1.innerHTML = "I did!"
+            button_2.innerHTML = "I did not"
+            dialogue_progression = "END_DIALOGUE"
+        }
+        
        
         else if(language == "eng" && name == "Vincent")
         {
@@ -164,11 +202,17 @@ function Begin_Dialogue(name){
             button_2.innerHTML = "Let's start."
             dialogue_progression = "Specular_start";
         }
-        else if (name == "Vinny_4"){
+        else if (name == "Vinny_4" && did_learn_about_pp == false){
             d_text = "Let's move on to something completely different, shall we?"
             button_1.innerHTML = "completely different?"
             button_2.innerHTML = "Let's!"
             dialogue_progression = "PostProcess_start";
+        }
+        else if (name == "Vinny_5" && did_learn_about_sobel == false){
+            d_text = "Post processing is used for more than just RGB value manipulation. It can accoplish complex results by analyzing pixels."
+            button_1.innerHTML = "For example?"
+            button_2.innerHTML = "How complex?"
+            dialogue_progression = "Sobel_start";
         }
         type_letters(d_text, true, true, false, false);
     }, 3000);
@@ -764,13 +808,14 @@ function vinny_dialogue_progression(buttonNumber){
             button_3.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 0.0); }
 
             button_4.innerHTML = "->";
-            button_4.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0); }
+            button_4.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);  Demo.useChromatic = true; Demo.useBlur = true;}
 
             type_letters(d_text, true, true, true, true);
             dialogue_progression = "PostProcess_5";
             break;
 
         case "PostProcess_5":
+            
             let removedColorName;
             let HueName;
             if(buttonNumber == 1){ removedColorName = "RED"; HueName = "cyan"}
@@ -788,7 +833,7 @@ function vinny_dialogue_progression(buttonNumber){
                 button_3.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 0.0); }
 
                 button_4.innerHTML = "->";
-                button_4.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0); Demo.useChromatic = true; Demo.useBlur = true; }
+                button_4.onclick = function() { Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0); Demo.useChromatic = true; Demo.useBlur = true;}
 
                 type_letters(d_text, true, true, true, true);
                 dialogue_progression = "PostProcess_5";
@@ -796,6 +841,8 @@ function vinny_dialogue_progression(buttonNumber){
                 d_text = "Using the three color chanels, we can also create a chromaatic aberration effect. Try moving your mouse around to see it in effect.";
                 button_1.innerHTML = "What is chromatic aberration?";
                 button_2.innerHTML = "What else can we do?";
+                button_2.onclick = function() {Demo.useChromatic = false; Demo.useBlur = false; Demo.enable_brightness_shift = true; }
+
 
                 type_letters(d_text, true, true, false, false);
                 dialogue_progression = "PostProcess_6";
@@ -803,49 +850,211 @@ function vinny_dialogue_progression(buttonNumber){
             break;
             
         case "PostProcess_6":
-            button_1.onclick = null;
-            button_2.onclick = null;
-            button_3.onclick = null;
-            button_4.onclick = null;
             if(buttonNumber == 1){
                 dither_image.style.display = "flex";
                 document.getElementById("image_window").src = "textures/Chromatic_aberration_comparison.jpg";
                 d_text = "Chromatic aberration is what happens when a camera lens fails to focus all colors into the same point, creating a blur with a rainbow hue at the unfocused area of that image.";
                 button_1.innerHTML = "->";
-
+                button_1.onclick = function() {}
                 type_letters(d_text, true, false, false, false);
                 dialogue_progression = "PostProcess_6_2";
             }else{
                 dither_image.style.display = "none";
-                d_text = "We can also adjust brighness!";
-                button_1.innerHTML = "What is chromatic aberration?";
-                button_2.innerHTML = "What else can we do?";
-
-                type_letters(d_text, true, true, false, false);
-                dialogue_progression = "PostProcess_6";
+                d_text = "We can also adjust brighness! We do so by increasing, or decreasing, the RGB values.";
+                button_1.innerHTML = "Is that it?";
+                button_1.onclick = function() {Demo.enable_brightness_shift = false; Demo.useDither = true; Demo.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0); Demo.useColor = false;}
+                type_letters(d_text, true, false, false, false);
+                dialogue_progression = "PostProcess_7";
             }
             break;
+
         case "PostProcess_6_2":
+            button_1.onclick = null;
             document.getElementById("image_window").src = "textures/prismdiag.png";
             d_text = "It's caused by dispersion - when a white light disperses into different wavelengths, aka different colors!";
             button_1.innerHTML = "Can you repeat that?";
             button_2.innerHTML = "What else can we do?";
-
+            button_2.onclick = function() {Demo.useChromatic = false; Demo.useBlur = false; Demo.enable_brightness_shift = true; }
             type_letters(d_text, true, true, false, false);
             dialogue_progression = "PostProcess_6";
             break;
+
+        case "PostProcess_7":
+            // button_1.onclick = null;
+            // button_2.onclick = null;
+            // button_3.onclick = null;
+            // button_4.onclick = null;
+            d_text = "We can get our old friend Dithering too, actually, it is mainly used as a post process effect.";
+            button_2.innerHTML = "->";
+            button_2.onclick = function() {Demo.useColor = true; }
+            type_letters(d_text, false, true, false, false);
+            dialogue_progression = "PostProcess_8";
+            break;
+
+        case "PostProcess_8":
+            d_text = "Colored dithering is also possible by multiplying the base color and the dither result.";
+            button_2.innerHTML = "->";
+            type_letters(d_text, false, true, false, false);
+            dialogue_progression = "PostProcess_9";
+            break;
+
+        case "PostProcess_9":
+            button_1.onclick = function() {}
+            button_2.onclick = function() {}
+            button_3.onclick = function() {}
+            button_4.onclick = function() {}
+            Demo.useDither = false;
+            d_text = "Now that you know what can be done, you should give it a try yourself. I will give a couple of requests, and you do your best to match my request!";
+            button_1.innerHTML = "Ok!";
+            button_2.innerHTML = "Let's do it!";
+            type_letters(d_text, true, true, false, false);
+            dialogue_progression = "PostProcess_10";
+            break;
+
+        case "PostProcess_10":
+            pp_controller[0].style.display = "flex";
+            Demo.useDither = false;
+            Demo.Dialogue_Meshes_rescale(10);
+            Demo.ornstein_position = glMatrix.vec4.fromValues(1.5, 44, 0);
+            Demo.Dialogue_Meshes_rescale(30);
+            Demo.configureSpecular(true);
+            d_text = "The helm should be brighter and more gold with a 'retro' effect on it.";
+            button_1.innerHTML = "Check";
+            dialogue_progression = "PostProcess_game_1";
+            type_letters(d_text, true, false, false, false);
+            break;
+
+        case "PostProcess_11":
+            pp_reset();
+            Demo.Dialogue_Meshes_rescale(31);
+            Demo.Dialogue_Meshes_rescale(40);
+            d_text = "Now make the dark background neon yellow/orange/green and the light areas purple.";
+            button_1.innerHTML = "Check";
+            dialogue_progression = "PostProcess_game_2";
+            type_letters(d_text, true, false, false, false);
+            break;
+        case "PostProcess_12":
+            pp_reset();
+            Demo.Dialogue_Meshes_rescale(41);
+            Demo.Dialogue_Meshes_rescale(0);
+            d_text = "And lastly, make the rainbow effect, the dotted effect and a blue hue.";
+            button_1.innerHTML = "Check";
+            dialogue_progression = "PostProcess_game_3";
+            type_letters(d_text, true, false, false, false);
+            break;
+        case "PostProcess_13":
+            pp_controller[0].style.display = "none";
+            pp_reset();
+            Demo.Dialogue_Meshes_rescale(0);
+            d_text = "You fulfilled all my requests. I am now sure you understand the basic post processing effects!";
+            button_1.innerHTML = "End Lesson";
+            dialogue_progression = "PostProcess_end";
+            type_letters(d_text, true, false, false, false);
+            break;
+
+        case "PostProcess_end":
+            did_learn_about_pp = true;
+            d_text = ""
+            button_1.innerHTML = ""
+            button_2.innerHTML = ""
+            type_letters(d_text, false, false, false, false);
+            End_Dialogue();
+            break;
+
+
+        case "Sobel_start":
+            d_text = "With our human eyes, we can tell that something is and 'edge' because there is a sudden noticable change in color/contrast. It makes an object pop from the background.";
+            button_1.innerHTML = "->";
+            dialogue_progression = "Sobel_1";
+            type_letters(d_text, true, false, false, false);
+            break;
+
+        case "Sobel_1":
+            d_text = "So, if we take a pixel and every pixel around it, by comparing the luminocity of them, we can determine if that middle pixel is an edge.";
+            button_1.innerHTML = "What does it look like?";
+            dialogue_progression = "Sobel_2";
+            type_letters(d_text, true, false, false, false);
+            break;
+
+        case "Sobel_2":
+            Demo.Dialogue_Meshes_rescale(10);
+            Demo.Dialogue_Meshes_rescale(40);
+            Demo.useColor = false;
+            Demo.useSobel = true;
+            d_text = "The result is a bit messy, but it's the start to many other uses. This pixel comparison method is also used for other effects like 'Blur' or 'Sharpen'.";
+            button_1.innerHTML = "What about 3D objects";
+            button_2.innerHTML = "And if the image is moving?";
+            dialogue_progression = "Sobel_3";
+            type_letters(d_text, true, true, false, false);
+            break;
+
+        case "Sobel_3":
+            Demo.Dialogue_Meshes_rescale(30);
+            Demo.Dialogue_Meshes_rescale(41);
+            Demo.configureSpecular(true);
+            d_text = "It does work on both 3D and moving objects, however, in this case, it picks up the highlight and sees it as an edge, so it's imperfect without further tweaking.";
+            button_1.innerHTML = "What is this called?";
+            dialogue_progression = "Sobel_4";
+            type_letters(d_text, true, false, false, false);
+            break;
+        case "Sobel_4":
+            Demo.planePosition[0] = 0.5
+            Demo.Dialogue_Meshes_rescale(40);
+            Demo.Dialogue_Meshes_rescale(41);
+            d_text = "This iss called the 'Sobel operator' or 'Sobel–Feldman operator', named after the two people who created this method.";
+            button_1.innerHTML = "->";
+            dialogue_progression = "Sobel_5";
+            type_letters(d_text, true, false, false, false);
+            break;
+        case "Sobel_5":
+            Demo.useThreshold = false;
+            Demo.planePosition[0] = 0.5
+            Demo.Dialogue_Meshes_rescale(40);
+            Demo.copyVideo = true;
+            Demo.Dialogue_Meshes_rescale(31);
+            Demo.video.style.display = "block";
+            d_text = "The result's I showed so far are with lower (darker) values erased. This is what a 'raw' sobel filter looks like.";
+            button_1.innerHTML = "->";
+            dialogue_progression = "Sobel_6";
+            type_letters(d_text, true, false, false, false);
+            break;
         
+        case "Sobel_6":
+            Demo.edgeColor = glMatrix.vec3.fromValues(0.3, 0.1, 0.0);
+            Demo.useThreshold = true;
+            Demo.useColor = true;
+            d_text = "We can also use this effect to directly put the outlines on the image, although it would needd further adjustments to look 'good'.";
+            button_1.innerHTML = "->";
+            dialogue_progression = "Sobel_7";
+            type_letters(d_text, true, false, false, false);
+            break;
+        case "Sobel_7":
+            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(41);
+            Demo.video.style.display = "none";
+            d_text = "And that is all for the Sobel operator.";
+            button_1.innerHTML = "End Lesson";
+            dialogue_progression = "Sobel_end";
+            type_letters(d_text, true, false, false, false);
+            break;
+
+        case "Sobel_end":
+            did_learn_about_sobel = true;
+            d_text = ""
+            button_1.innerHTML = ""
+            button_2.innerHTML = ""
+            type_letters(d_text, false, false, false, false);
+            End_Dialogue();
+            break;
+
             
         //END    
         case "END_DIALOGUE":
             d_text = ""
             button_1.innerHTML = ""
-            type_letters(d_text, false, false, false, false);
+            type_letters(d_text, wwwfalse, false, false, false);
             End_Dialogue();
             break;
-            
-
-
     }
 
 }

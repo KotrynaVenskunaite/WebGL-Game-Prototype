@@ -19,7 +19,8 @@ DemoScene.prototype.Load = function (cb){
                 'Vinny_Palm_Point': 'Models/Vinny_palm_point.json',
                 'Ball': 'Models/ball.json',
                 'Cube': 'Models/cube.json',
-                'Ornstein': 'Models/ornstein.json'
+                'Ornstein': 'Models/ornstein.json',
+                'Picture_Plane': 'Models/plane.json'
             }, loadJSONResource, callback);
         },
         ShaderCode: function (callback){
@@ -50,6 +51,7 @@ DemoScene.prototype.Load = function (cb){
                 'Ornstein_Specular_Texture': 'textures/ornstein_helm_specular.png',
                 'Ornstein_Hair_Texture': 'textures/ornstein_hair_diffuse.png',
                 'Ornstein_Hair_Specular_Texture': 'textures/ornstein_hair_specular.png',
+                'Gojo_Statue_Texture': 'textures/gojo_statue.png',
             }, loadImage, callback);
         }
     }, function(LoadErrors, LoadResults){
@@ -215,6 +217,23 @@ DemoScene.prototype.Load = function (cb){
         me.Ornstein_Hair_Specular_Texture = ornstein_hair_specular_texture;
         me.gl.bindTexture(me.gl.TEXTURE_2D, null);
 
+        //Gojo_Statue_Texture
+        var gojo_statue_texture = me.gl.createTexture();
+        me.gl.bindTexture(me.gl.TEXTURE_2D, gojo_statue_texture);
+        me.gl.pixelStorei(me.gl.UNPACK_FLIP_Y_WEBGL, true);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_S, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_T, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MIN_FILTER, me.gl.LINEAR);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MAG_FILTER, me.gl.LINEAR);
+
+        me.gl.texImage2D(
+            me.gl.TEXTURE_2D, 0, me.gl.RGBA, me.gl.RGBA, 
+            me.gl.UNSIGNED_BYTE,
+            LoadResults.Textures.Gojo_Statue_Texture
+        );
+        me.Gojo_Statue_Texture = gojo_statue_texture;
+        me.gl.bindTexture(me.gl.TEXTURE_2D, null);
+
         
         //
         // Create Model Objects
@@ -277,7 +296,7 @@ DemoScene.prototype.Load = function (cb){
             me.BoxMesh.world,         
             glMatrix.vec3.fromValues(0.3, 0.3, 0.3) // scale X/Y/Z
         );
-         glMatrix.mat4.rotate(
+        glMatrix.mat4.rotate(
             me.BoxMesh.world, me.BoxMesh.world,
             glMatrix.glMatrix.toRadian(90),
             glMatrix.vec3.fromValues(-1, 0, 0)
@@ -285,6 +304,35 @@ DemoScene.prototype.Load = function (cb){
         glMatrix.mat4.translate(
             me.BoxMesh.world, me.BoxMesh.world,
             glMatrix.vec4.fromValues(0, 4, 1)
+        );
+
+        //Picture_Plane
+        var PlaneModel = LoadResults.Models.Picture_Plane;
+        me.planePosition = glMatrix.vec4.fromValues(1.0, 29.3, 0);
+        me.PlaneMesh = new Model (
+            me.gl,
+            PlaneModel.meshes[0].vertices,
+            [].concat.apply([], PlaneModel.meshes[0].faces),
+            PlaneModel.meshes[0].normals,
+            PlaneModel.meshes[0].texturecoords[0],
+            tangents,
+            me.Gojo_Statue_Texture,
+            box_color,
+            'Box'
+        );
+        glMatrix.mat4.scale(
+            me.PlaneMesh.world,         
+            me.PlaneMesh.world,         
+            glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
+        );
+        glMatrix.mat4.rotate(
+            me.PlaneMesh.world, me.PlaneMesh.world,
+            glMatrix.glMatrix.toRadian(90),
+            glMatrix.vec3.fromValues(0, -1, 0)
+        );
+        glMatrix.mat4.translate(
+            me.PlaneMesh.world, me.PlaneMesh.world,
+            me.planePosition
         );
 
         // Vinny Model
@@ -711,6 +759,38 @@ DemoScene.prototype.Load = function (cb){
                         glMatrix.vec4.fromValues(9, 0, 0)
                     );
 
+                    //4th
+                    me.Vinny_Overworld_Plaacegolder_4_CrossArms = new Model(
+                        me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vinny_Texture,
+                        outline_color,
+                        'Vinny_5'
+                    );
+                    glMatrix.mat4.scale(
+                        me.Vinny_Overworld_Plaacegolder_4_CrossArms.world,
+                        me.Vinny_Overworld_Plaacegolder_4_CrossArms.world,
+                        me.vinny_scale
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_4_CrossArms.world, me.Vinny_Overworld_Plaacegolder_4_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+                    );
+                    glMatrix.mat4.rotate(
+                        me.Vinny_Overworld_Plaacegolder_4_CrossArms.world, me.Vinny_Overworld_Plaacegolder_4_CrossArms.world,
+                        glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+                    );
+                    glMatrix.mat4.translate(
+                        me.Vinny_Overworld_Plaacegolder_4_CrossArms.world, me.Vinny_Overworld_Plaacegolder_4_CrossArms.world,
+                        glMatrix.vec4.fromValues(11, 0, 0)
+                    );
+
                     //PLACEHOLDER END
 					break;
 				case 'Outline':
@@ -957,6 +1037,10 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Vincent outline crossed arms mesh');
             return;
         }
+         if(!me.Vinny_Overworld_Plaacegolder_4_CrossArms){
+            cb('failed to load Vincent outline crossed arms mesh');
+            return;
+        }
         if(!me.Ornstein){
             cb('failed to load Ornstein mesh');
             return;
@@ -965,9 +1049,13 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Ornstein hair mesh');
             return;
         }
+        if(!me.PlaneMesh){
+            cb('failed to load Ornstein hair mesh');
+            return;
+        }
         
         // VARIABLES
-        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms, me.Vinny_Overworld_Plaacegolder_2_CrossArms, me.Vinny_Overworld_Plaacegolder_3_CrossArms];
+        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms, me.Vinny_Overworld_Plaacegolder_2_CrossArms, me.Vinny_Overworld_Plaacegolder_3_CrossArms, me.Vinny_Overworld_Plaacegolder_4_CrossArms, me.PlaneMesh];
         me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms];
         me.Dialogue_Meshes = [
             me.Vinny_Crossed_arms, me.Vinny_Outline_crossed_arms,
@@ -1020,6 +1108,7 @@ DemoScene.prototype.Load = function (cb){
         me.BLUExOffset = -0.05;
         me.BLUEyOffset = 0.0;
         me.PP_ColorChanels = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+        me.edgeColor = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
         me.enable_brightness_shift = false;
 
         me.useChromatic = false;
@@ -1027,8 +1116,18 @@ DemoScene.prototype.Load = function (cb){
         me.useDither = false;
         me.useSobel = false;
         me.useColor = true;
+        me.useDuotone = false;
+        me.useThreshold = true;
+
+        me.DuotoneDark = glMatrix.vec3.fromValues(0.0, 0.5, 1.0);
+        me.DuotoneLight = glMatrix.vec3.fromValues(0.2, 0.0, 0.5);
 
         me.mousePos = glMatrix.vec2.fromValues(0.0, 0.0);
+
+        //Video
+        me.copyVideo = false;
+        me.videoTexture = initTexture(me.gl);
+        me.video = setupVideo("textures/mesmer.mp4");
 
         //
         // Create Shaders
@@ -1173,13 +1272,18 @@ DemoScene.prototype.Load = function (cb){
             BLUExOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'BLUExOffset'),
             BLUEyOffset: me.gl.getUniformLocation(me.PostProcessProgram, 'BLUEyOffset'),
             colorChanels: me.gl.getUniformLocation(me.PostProcessProgram, 'colorChanels'),
+            edgeColor: me.gl.getUniformLocation(me.PostProcessProgram, 'edgeColor'),
 
             useCA: me.gl.getUniformLocation(me.PostProcessProgram, 'useCA'),
             useDither: me.gl.getUniformLocation(me.PostProcessProgram, 'useDither'),
             useSobel: me.gl.getUniformLocation(me.PostProcessProgram, 'useSobel'),
             useColor: me.gl.getUniformLocation(me.PostProcessProgram, 'useColor'),
+            useDuotone: me.gl.getUniformLocation(me.PostProcessProgram, 'useDuotone'),
+            DuotoneLight: me.gl.getUniformLocation(me.PostProcessProgram, 'DuotoneLight'),
+            DuotoneDark: me.gl.getUniformLocation(me.PostProcessProgram, 'DuotoneDark'),
             mousePos: me.gl.getUniformLocation(me.PostProcessProgram, 'mousePos'),
-            useBlur: me.gl.getUniformLocation(me.PostProcessProgram, 'useBlur')
+            useBlur: me.gl.getUniformLocation(me.PostProcessProgram, 'useBlur'),
+            useThreshold: me.gl.getUniformLocation(me.PostProcessProgram, 'useThreshold')
         };
 
         me.NormalProgram.attribs = {
@@ -1414,7 +1518,7 @@ DemoScene.prototype._Update = function (dt) {
 
     // brightness shift
     if(this.enable_brightness_shift == true){
-        console.log("brighness should shift: " + this.PP_ColorChanels)
+        // console.log("brighness should shift: " + this.PP_ColorChanels)
         const brightness_change_rate = 1.3;
         const brightness_change = brightness_change_rate * (dt/1000)
 
@@ -1436,7 +1540,13 @@ DemoScene.prototype._Update = function (dt) {
         }
     }
     
-    
+    if (this.copyVideo) {
+        updateTexture(this.gl, this.videoTexture, this.video);
+        this.PlaneMesh.texture = this.videoTexture;
+    }
+    // else{
+    //     this.PlaneMesh.texture = this.Gojo_Statue_Texture;
+    // }
    
 
     if(this.isLightRotating == true){
@@ -1534,6 +1644,9 @@ DemoScene.prototype._PostProcess = function(){
     gl.bindTexture(gl.TEXTURE_2D, framebufferTexture);
     gl.uniform1i(this.PostProcessProgram.uniforms.sampler, 0);
     gl.uniform3fv(this.PostProcessProgram.uniforms.colorChanels, this.PP_ColorChanels);
+    gl.uniform3fv(this.PostProcessProgram.uniforms.edgeColor, this.edgeColor);
+    gl.uniform3fv(this.PostProcessProgram.uniforms.DuotoneLight, this.DuotoneLight);
+    gl.uniform3fv(this.PostProcessProgram.uniforms.DuotoneDark, this.DuotoneDark);
     gl.uniform2f(
         this.PostProcessProgram.uniforms.canvasResolution,
         this.textureWidth,
@@ -1563,6 +1676,8 @@ DemoScene.prototype._PostProcess = function(){
     gl.uniform1i(this.PostProcessProgram.uniforms.useBlur, this.useBlur);
     gl.uniform1i(this.PostProcessProgram.uniforms.useSobel, this.useSobel);
     gl.uniform1i(this.PostProcessProgram.uniforms.useColor, this.useColor);
+    gl.uniform1i(this.PostProcessProgram.uniforms.useDuotone, this.useDuotone);
+    gl.uniform1i(this.PostProcessProgram.uniforms.useThreshold, this.useThreshold);
 
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
 
@@ -2173,8 +2288,37 @@ DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
     // 4 - point up
     //20 - Show Box Mesh
     //30 - Ornstein helm 
+    //40 - Plane/Picture Mesh
 
-    if (current_mesh >= 30){
+    if (current_mesh >= 40 && current_mesh < 50){
+        glMatrix.mat4.identity(this.PlaneMesh.world);
+        if (current_mesh == 40){
+            glMatrix.mat4.scale(
+                this.PlaneMesh.world,         
+                this.PlaneMesh.world,         
+                glMatrix.vec3.fromValues(0.15, 0.15, 0.15) // scale X/Y/Z
+            );
+        }
+        else{
+            glMatrix.mat4.scale(
+                this.PlaneMesh.world,         
+                this.PlaneMesh.world,         
+                glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
+            );
+        }
+        glMatrix.mat4.rotate(
+            this.PlaneMesh.world, this.PlaneMesh.world,
+            glMatrix.glMatrix.toRadian(90),
+            glMatrix.vec3.fromValues(0, -1, 0)
+        );
+        glMatrix.mat4.translate(
+            this.PlaneMesh.world, this.PlaneMesh.world,
+            this.planePosition
+        );
+        return;
+    }
+
+    if (current_mesh >= 30 && current_mesh < 40){
         for (var i = 0; i < 2; i++){
             glMatrix.mat4.identity(this.SpecularMeshes[i].world);
 
@@ -2339,4 +2483,111 @@ DemoScene.prototype._onMouseMove = function (){
 
     // console.log("Coordinate x: " + this.mousePos.x, "Coordinate y: " + this.mousePos.y);
 
+}
+
+
+//set up video
+function setupVideo(url) {
+  const video = document.createElement("video");
+
+  let playing = false;
+  let timeupdate = false;
+
+  video.playsInline = true;
+  video.muted = true;
+  video.loop = true;
+  
+  // Style the video element to appear on the page
+  
+  video.style.position = "fixed";
+  video.style.top = "33.5%";
+  video.style.left = "65%";
+  video.style.transform = "translate(-50%, -50%)";
+  video.style.width = "52vh";
+  video.style.height = "auto";
+  video.style.border = "2px solid white";
+  video.style.borderRadius = "5px";
+  video.style.zIndex = "1000";
+  video.style.display = "none"
+
+  // Waiting for these 2 events ensures
+  // there is data in the video
+
+  video.addEventListener("playing", () => {
+    playing = true;
+    checkReady();
+  });
+
+  video.addEventListener("timeupdate", () => {
+    timeupdate = true;
+    checkReady();
+  });
+
+  video.src = url;
+  video.play();
+  
+  // Append to document body so it's visible
+  document.body.appendChild(video);
+
+  function checkReady() {
+    if (playing && timeupdate) {
+      video.copyVideo = true;
+    }
+  }
+
+  return video;
+}
+
+//create video texture
+function initTexture(gl) {
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Because video has to be download over the internet
+  // they might take a moment until it's ready so
+  // put a single pixel in the texture so we can
+  // use it immediately.
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const width = 1;
+  const height = 1;
+  const border = 0;
+  const srcFormat = gl.RGBA;
+  const srcType = gl.UNSIGNED_BYTE;
+  const pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    level,
+    internalFormat,
+    width,
+    height,
+    border,
+    srcFormat,
+    srcType,
+    pixel,
+  );
+
+  // Turn off mips and set wrapping to clamp to edge so it
+  // will work regardless of the dimensions of the video.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  return texture;
+}
+
+function updateTexture(gl, texture, video) {
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const srcFormat = gl.RGBA;
+  const srcType = gl.UNSIGNED_BYTE;
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    level,
+    internalFormat,
+    srcFormat,
+    srcType,
+    video,
+  );
 }

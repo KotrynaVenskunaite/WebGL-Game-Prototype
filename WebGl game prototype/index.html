@@ -107,8 +107,8 @@
                     <div class = "RGB_control" id="B_plus">+</div>
                     <div class = "RGB_control" id="B_minus">-</div>
                 </div>
-
             </div>
+
             <div class="boolean_options_area">
                 <div class="CBG_buttons">
                     <div class = "CBG_individual" id="CA">Chromatic aberration</div>
@@ -117,11 +117,62 @@
                 </div>
                 <div class="dither_area">
                     <div class = "CBG_individual" id="dither">Dither</div>
-                    <div class = "CBG_individual" id="dither_color">Color</div>
+                    <div class = "CBG_individual" id="duotone">Duotone</div>
                 </div>
                 
             </div>
+
+
+            <div id="duotone_options">
+                <div class="Duotone_names">
+                    <div id="duotone_l_box">Light area</div>
+                    <div id="duotone_d_box">Dark area</div>
+                </div>
+                
+                <div class="duotone_RGB_areas">
+                    <div class="RGB_area_duotone_negative">
+                        <div id="R_area" class="RGB_individual_areas">
+                            <div class = "RGB_button" id="R_button_duotone_l">R</div>
+                            <div class = "RGB_control" id="R_plus_duotone_l">+</div>
+                            <div class = "RGB_control" id="R_minus_duotone_l">-</div>
+                        </div>
+                        <div id="G_area" class="RGB_individual_areas">
+                            <div class = "RGB_button" id="G_button_duotone_l">G</div>
+                            <div class = "RGB_control" id="G_plus_duotone_l">+</div>
+                            <div class = "RGB_control" id="G_minus_duotone_l">-</div>
+                        </div>
+                        <div id="B_area" class="RGB_individual_areas">
+                            <div class = "RGB_button" id="B_button_duotone_l">B</div>
+                            <div class = "RGB_control" id="B_plus_duotone_l">+</div>
+                            <div class = "RGB_control" id="B_minus_duotone_l">-</div>
+                        </div>
+                    </div>
+                    <div class="RGB_area_duotone_positive">
+                        <div id="R_area" class="RGB_individual_areas">
+                            <div class = "RGB_button" id="R_button_duotone_d">R</div>
+                            <div class = "RGB_control" id="R_plus_duotone_d">+</div>
+                            <div class = "RGB_control" id="R_minus_duotone_d">-</div>
+                        </div>
+                        <div id="G_area" class="RGB_individual_areas">
+                            <div class = "RGB_button" id="G_button_duotone_d">G</div>
+                            <div class = "RGB_control" id="G_plus_duotone_d">+</div>
+                            <div class = "RGB_control" id="G_minus_duotone_d">-</div>
+                        </div>
+                        <div id="B_area" class="RGB_individual_areas">
+                            <div class = "RGB_button" id="B_button_duotone_d">B</div>
+                            <div class = "RGB_control" id="B_plus_duotone_d">+</div>
+                            <div class = "RGB_control" id="B_minus_duotone_d">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
         </div>
+
+        <!-- <div id = "mesmer">
+            <img src="textures/mesmer.gif" alt="mesmer">
+        </div> -->
         
         
         <!-- <i>Demo is above this text</i> -->
@@ -131,6 +182,7 @@
         <script src="SceneDemo.js"></script>
         <script src="UI_controls.js"></script>
         <script src="PostProcess.js"></script>
+        <script src="pp_game.js"></script>
         <script src="drawing.js"></script>
         <script src="post_process_control.js"></script>
         <script src="quiz.js"></script>

@@ -1029,6 +1029,7 @@ function vinny_dialogue_progression(buttonNumber){
             type_letters(d_text, true, false, false, false);
             break;
         case "Sobel_7":
+            Demo.useSobel = false;
             Demo.Dialogue_Meshes_rescale(0);
             Demo.Dialogue_Meshes_rescale(41);
             Demo.video.style.display = "none";
@@ -1052,7 +1053,7 @@ function vinny_dialogue_progression(buttonNumber){
         case "END_DIALOGUE":
             d_text = ""
             button_1.innerHTML = ""
-            type_letters(d_text, wwwfalse, false, false, false);
+            type_letters(d_text, false, false, false, false);
             End_Dialogue();
             break;
     }

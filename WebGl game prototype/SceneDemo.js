@@ -294,7 +294,7 @@ DemoScene.prototype.Load = function (cb){
         glMatrix.mat4.scale(
             me.BoxMesh.world,         
             me.BoxMesh.world,         
-            glMatrix.vec3.fromValues(0.3, 0.3, 0.3) // scale X/Y/Z
+            glMatrix.vec3.fromValues(0.0, 0.0, 0.0) // scale X/Y/Z
         );
         glMatrix.mat4.rotate(
             me.BoxMesh.world, me.BoxMesh.world,

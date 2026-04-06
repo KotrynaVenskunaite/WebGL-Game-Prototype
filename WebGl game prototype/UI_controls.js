@@ -39,7 +39,12 @@ function onButton1Click() {
         if(pp_gojo() == true){
             console.log("passed quest two");
             dialogue_progression = "PostProcess_12";
+        }else{
+            
+            console.log("dialogue is triggering");
+            type_letters(d_text, true, false, false, false);
         }
+        
         // vinny_dialogue_progression(1);
     }
     if (dialogue_progression === "PostProcess_game_3"){
@@ -63,7 +68,7 @@ var did_skip_dialogue = false;
 var can_skip_dialogue = false;
 
 var did_learn_about_dither = false;
-var did_learn_about_normals = true;
+var did_learn_about_normals = false;
 var did_learn_about_specular = false;
 var did_learn_about_pp = false;
 var did_learn_about_sobel = false;
@@ -174,11 +179,23 @@ function Begin_Dialogue(name){
        
         else if(language == "eng" && name == "Vincent")
         {
-            d_text = "And when you finally saw it come it passed you by and left you so defeated"
+            d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding.";
             dialogue_progression = 0;
         }
         else if (name == "Vinny_3" && did_learn_about_normals == false){
-            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise"
+            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
+            button_1.innerHTML = "Okay."
+            button_2.innerHTML = "Later then."
+            dialogue_progression = "END_DIALOGUE";
+        }
+        else if (name == "Vinny_4" && did_learn_about_specular == false){
+            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
+            button_1.innerHTML = "Okay."
+            button_2.innerHTML = "Later then."
+            dialogue_progression = "END_DIALOGUE";
+        }
+        else if (name == "Vinny_5" && did_learn_about_pp == false){
+            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
             button_1.innerHTML = "Okay."
             button_2.innerHTML = "Later then."
             dialogue_progression = "END_DIALOGUE";

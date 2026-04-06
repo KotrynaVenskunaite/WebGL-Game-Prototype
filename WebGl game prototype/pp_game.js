@@ -35,7 +35,24 @@ function pp_gojo(){
     ){  
         console.log("Gojo good");
         return true;
+    }else{ d_text = "";}
+
+    if (Demo.useDuotone == false) {
+        d_text += "Use duotone! \n";
+    }else if (Demo.useBlur == true || Demo.useDither == true) {
+        d_text += "You should ONLY use duotone! \n";
+    }else if (
+        Demo.DuotoneDark[0] < 0.5 ||
+        Demo.DuotoneDark[1] > 0.5 ||
+        Demo.DuotoneDark[2] > 0.2) {
+        d_text += "Duotone DARK area is an incorrect color! \n";
+    }else if (
+        Demo.DuotoneLight[0] < 0.2 ||
+        Demo.DuotoneLight[1] > 0.2 ||
+        Demo.DuotoneLight[2] < 0.4) {
+        d_text += "Duotone LIGHT area is an incorrect color! \n";
     }
+    d_text += "Make the dark background neon yellow/orange/green and the light areas purple.";
     console.log("Gojo bad");
     return false;
 }

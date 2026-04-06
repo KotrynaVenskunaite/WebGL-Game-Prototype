@@ -183,12 +183,12 @@ void main() {
     color = vec3(grayscale);
   }
   if(useDuotone == true) {
-    vec3 lumFactor = vec3(0.2126f, 0.7152f, 0.0722f);
-    vec3 rgb = vec3(dot(color, lumFactor));
+    // vec3 lumFactor = vec3(0.2126f, 0.7152f, 0.0722f);
+    // vec3 rgb = vec3(dot(color, lumFactor));
     vec3 duoD = DuotoneDark;
     vec3 duotT = DuotoneLight;
     //vignette(texCoords, 0.5f)
-    color = mix(duoD, duotT, rgb);
+    color = mix(duoD, duotT, grayscale);
   }
 
   // float thresholded = dither2x2(texCoords, grayscale + ((rand(texCoords) / 9.0f)));

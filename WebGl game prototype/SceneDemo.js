@@ -99,8 +99,8 @@ DemoScene.prototype.Load = function (cb){
         me.gl.bindTexture(me.gl.TEXTURE_2D, null);
 
         // NORMAL Texture
-        var normal_texture = me.gl.createTexture();
-        me.gl.bindTexture(me.gl.TEXTURE_2D, normal_texture);
+        me.normal_texture = me.gl.createTexture();
+        me.gl.bindTexture(me.gl.TEXTURE_2D, me.normal_texture);
         me.gl.pixelStorei(me.gl.UNPACK_FLIP_Y_WEBGL, true);
         me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_S, me.gl.CLAMP_TO_EDGE);
         me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_T, me.gl.CLAMP_TO_EDGE);
@@ -112,7 +112,8 @@ DemoScene.prototype.Load = function (cb){
             me.gl.UNSIGNED_BYTE,
             LoadResults.Textures.Normal_Texture
         );
-        me.Normal_Texture = normal_texture;
+        me.Normal_Texture = me.normal_texture;
+        me.NormalTextureImage = LoadResults.Textures.Normal_Texture;
         me.gl.bindTexture(me.gl.TEXTURE_2D, null);
 
         //Specular Base
@@ -287,7 +288,7 @@ DemoScene.prototype.Load = function (cb){
             BoxModel.meshes[0].normals,
             BoxModel.meshes[0].texturecoords[0],
             tangents,
-            me.Specular_Base_Texture,
+            me.Cube_Texture,
             box_color,
             'Box'
         );
@@ -2427,9 +2428,6 @@ DemoScene.prototype.Set_Dither_Shader_Variabled = function(dither, grid, ratio, 
 DemoScene.prototype.Set_Image_as_Normal = function(){
     var gl = this.gl;
 
-    // ctx.filter = "blur(3px)";
-    // ctx.drawImage(canvas, 0, 0);
-    // ctx.filter = "none";
     this.lightPositionNormals = glMatrix.vec4.fromValues(0.4, 0.25, -0.33, 1.0);
     gl.bindTexture(gl.TEXTURE_2D, this.Normal_Texture);
 
@@ -2447,7 +2445,6 @@ DemoScene.prototype.Set_Image_as_Normal = function(){
         canvas
     );
 
-
     this.textureWidth = canvas.width;
     this.textureHeight =  canvas.height;
     this.isMapGenerated = 1;
@@ -2455,10 +2452,17 @@ DemoScene.prototype.Set_Image_as_Normal = function(){
 }
 
 DemoScene.prototype.Set_Crate_example = function(useSpecular){
-    // var gl = this.gl;
+    var gl = this.gl;
 
     this.lightPositionNormals = glMatrix.vec4.fromValues(0.4, 0.25, -0.33, 1.0);
     this.BoxMesh.texture = this.Specular_Base_Texture;
+
+    gl.bindTexture(gl.TEXTURE_2D, this.Normal_Texture);
+    gl.texImage2D(
+        gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+        gl.UNSIGNED_BYTE,
+        this.NormalTextureImage
+    );
 
 
     this.textureWidth = 400;

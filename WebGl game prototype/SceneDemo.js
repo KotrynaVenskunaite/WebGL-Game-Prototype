@@ -3481,7 +3481,7 @@ DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
 
     if (current_mesh >= 50 && current_mesh < 60){
         glMatrix.mat4.identity(this.BoxMesh.world);
-        if (current_mesh == 20){
+        if (current_mesh == 50){
             glMatrix.mat4.scale(
                 this.BoxMesh.world,         
                 this.BoxMesh.world,         

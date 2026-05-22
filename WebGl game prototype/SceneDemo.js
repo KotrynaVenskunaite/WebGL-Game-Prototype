@@ -17,6 +17,21 @@ DemoScene.prototype.Load = function (cb){
                 'Vinny_Point_Up': 'Models/Vinny_Point_Up_2.json',
                 'Vinny_Crossed_Arms': 'Models/Vinny_Crossed_arms.json',
                 'Vinny_Palm_Point': 'Models/Vinny_palm_point.json',
+
+                'Choso_lean': 'Models/choso_lean.json',
+                'Choso_shrug': 'Models/choso_shrug.json',
+                'Choso_hip': 'Models/choso_hip.json',
+                'Choso_point': 'Models/choso_point.json',
+
+                'Vergil_chair': 'Models/vergil_chair.json',
+                'Vergil_think': 'Models/vergil_think.json',
+                'Vergil_show': 'Models/vergil_show.json',
+                'Vergil_look': 'Models/vergil_look.json',
+
+                'Dot': 'Models/dottore.json',
+                'Dot_shrug': 'Models/dottore_shrug.json',
+                'Dot_show': 'Models/dottore_show.json',
+
                 'Ball': 'Models/ball.json',
                 'Cube': 'Models/cube.json',
                 'Ornstein': 'Models/ornstein.json',
@@ -43,6 +58,9 @@ DemoScene.prototype.Load = function (cb){
         Textures: function (callback){
             async.map({
                 'Vinny_Texture': 'textures/Vinny_Texture.png',
+                'Choso_Texture': 'textures/choso_texture.png',
+                'Vergil_Texture': 'textures/vergil_texture.png',
+                'Dot_Texture': 'textures/dot_texture.png',
                 'Cube_Texture': 'textures/number_grid.png',
                 'Normal_Texture': 'textures/number_grid_normals.png',
                 'Specular_Base_Texture': 'textures/container2.png',
@@ -79,6 +97,57 @@ DemoScene.prototype.Load = function (cb){
             LoadResults.Textures.Vinny_Texture
         );
         me.Vinny_Texture = vinny_texture;
+        me.gl.bindTexture(me.gl.TEXTURE_2D, null);
+
+        //Choso_Texture
+        var choso_texture = me.gl.createTexture();
+        me.gl.bindTexture(me.gl.TEXTURE_2D, choso_texture);
+        me.gl.pixelStorei(me.gl.UNPACK_FLIP_Y_WEBGL, true);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_S, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_T, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MIN_FILTER, me.gl.LINEAR);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MAG_FILTER, me.gl.LINEAR);
+
+        me.gl.texImage2D(
+            me.gl.TEXTURE_2D, 0, me.gl.RGBA, me.gl.RGBA, 
+            me.gl.UNSIGNED_BYTE,
+            LoadResults.Textures.Choso_Texture
+        );
+        me.Choso_Texture = choso_texture;
+        me.gl.bindTexture(me.gl.TEXTURE_2D, null);
+
+        //Vergil_Texture
+        var vergil_texture = me.gl.createTexture();
+        me.gl.bindTexture(me.gl.TEXTURE_2D, vergil_texture);
+        me.gl.pixelStorei(me.gl.UNPACK_FLIP_Y_WEBGL, true);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_S, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_T, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MIN_FILTER, me.gl.LINEAR);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MAG_FILTER, me.gl.LINEAR);
+
+        me.gl.texImage2D(
+            me.gl.TEXTURE_2D, 0, me.gl.RGBA, me.gl.RGBA, 
+            me.gl.UNSIGNED_BYTE,
+            LoadResults.Textures.Vergil_Texture
+        );
+        me.Vergil_Texture = vergil_texture;
+        me.gl.bindTexture(me.gl.TEXTURE_2D, null);
+
+        //Dot_Texture
+        var dot_texture = me.gl.createTexture();
+        me.gl.bindTexture(me.gl.TEXTURE_2D, dot_texture);
+        me.gl.pixelStorei(me.gl.UNPACK_FLIP_Y_WEBGL, true);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_S, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_WRAP_T, me.gl.CLAMP_TO_EDGE);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MIN_FILTER, me.gl.LINEAR);
+        me.gl.texParameteri(me.gl.TEXTURE_2D, me.gl.TEXTURE_MAG_FILTER, me.gl.LINEAR);
+
+        me.gl.texImage2D(
+            me.gl.TEXTURE_2D, 0, me.gl.RGBA, me.gl.RGBA, 
+            me.gl.UNSIGNED_BYTE,
+            LoadResults.Textures.Dot_Texture
+        );
+        me.Dot_Texture = dot_texture;
         me.gl.bindTexture(me.gl.TEXTURE_2D, null);
 
         // Cube Texture
@@ -341,6 +410,9 @@ DemoScene.prototype.Load = function (cb){
         me.zero_scale = glMatrix.vec3.fromValues(0.0, 0.0, 0.0);
         me.vinny_dialogue_position = glMatrix.vec4.fromValues(0, 0, 13);
         var outline_color = glMatrix.vec4.fromValues(0.5, 0.5, 0.5, 1);
+        var outline_color_blue = glMatrix.vec4.fromValues(0.450, 0.853, 1.00, 1);
+        var outline_color_violet = glMatrix.vec4.fromValues(0.734, 0.580, 1.00, 1);
+        var light_outline_color = glMatrix.vec4.fromValues(0.9, 0.9, 0.9, 1);
         for (var i = 0; i < LoadResults.Models.Vinny_Bench.meshes.length; i++) {
 			var mesh = LoadResults.Models.Vinny_Bench.meshes[i];
             
@@ -665,100 +737,100 @@ DemoScene.prototype.Load = function (cb){
 
 
                     //PLACEHOLDER OVERWORLD MODEL
-                    me.Vinny_Overworld_Plaacegolder_CrossArms = new Model(
-                        me.gl,
-						mesh.vertices,
-						[].concat.apply([], mesh.faces),
-						mesh.normals,
-						mesh.texturecoords[0],
-                        null,
-                        me.Vinny_Texture,
-                        outline_color,
-                        'Vinny_2'
-                    );
-                    glMatrix.mat4.scale(
-                        me.Vinny_Overworld_Plaacegolder_CrossArms.world,
-                        me.Vinny_Overworld_Plaacegolder_CrossArms.world,
-                        me.vinny_scale
-                    );
-                    glMatrix.mat4.rotate(
-                        me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
-                        glMatrix.glMatrix.toRadian(90),
-                        glMatrix.vec3.fromValues(-1, 0, 0)
-                    );
-                    glMatrix.mat4.rotate(
-                        me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
-                        glMatrix.glMatrix.toRadian(90),
-                        glMatrix.vec3.fromValues(0, 0, -1)
-                    );
-                    glMatrix.mat4.translate(
-                        me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
-                        glMatrix.vec4.fromValues(5, 0, 0)
-                    );
+                    // me.Vinny_Overworld_Plaacegolder_CrossArms = new Model(
+                    //     me.gl,
+					// 	mesh.vertices,
+					// 	[].concat.apply([], mesh.faces),
+					// 	mesh.normals,
+					// 	mesh.texturecoords[0],
+                    //     null,
+                    //     me.Vinny_Texture,
+                    //     outline_color,
+                    //     'Vinny_2'
+                    // );
+                    // glMatrix.mat4.scale(
+                    //     me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                    //     me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                    //     me.vinny_scale
+                    // );
+                    // glMatrix.mat4.rotate(
+                    //     me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                    //     glMatrix.glMatrix.toRadian(90),
+                    //     glMatrix.vec3.fromValues(-1, 0, 0)
+                    // );
+                    // glMatrix.mat4.rotate(
+                    //     me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                    //     glMatrix.glMatrix.toRadian(90),
+                    //     glMatrix.vec3.fromValues(0, 0, -1)
+                    // );
+                    // glMatrix.mat4.translate(
+                    //     me.Vinny_Overworld_Plaacegolder_CrossArms.world, me.Vinny_Overworld_Plaacegolder_CrossArms.world,
+                    //     glMatrix.vec4.fromValues(5, 0, 0)
+                    // );
 
                     //2nd
-                    me.Vinny_Overworld_Plaacegolder_2_CrossArms = new Model(
-                        me.gl,
-						mesh.vertices,
-						[].concat.apply([], mesh.faces),
-						mesh.normals,
-						mesh.texturecoords[0],
-                        null,
-                        me.Vinny_Texture,
-                        outline_color,
-                        'Vinny_3'
-                    );
-                    glMatrix.mat4.scale(
-                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
-                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
-                        me.vinny_scale
-                    );
-                    glMatrix.mat4.rotate(
-                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
-                        glMatrix.glMatrix.toRadian(90),
-                        glMatrix.vec3.fromValues(-1, 0, 0)
-                    );
-                    glMatrix.mat4.rotate(
-                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
-                        glMatrix.glMatrix.toRadian(90),
-                        glMatrix.vec3.fromValues(0, 0, -1)
-                    );
-                    glMatrix.mat4.translate(
-                        me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
-                        glMatrix.vec4.fromValues(7, 0, 0)
-                    );
+                    // me.Vinny_Overworld_Plaacegolder_2_CrossArms = new Model(
+                    //     me.gl,
+					// 	mesh.vertices,
+					// 	[].concat.apply([], mesh.faces),
+					// 	mesh.normals,
+					// 	mesh.texturecoords[0],
+                    //     null,
+                    //     me.Vinny_Texture,
+                    //     outline_color,
+                    //     'Vinny_3'
+                    // );
+                    // glMatrix.mat4.scale(
+                    //     me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                    //     me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                    //     me.vinny_scale
+                    // );
+                    // glMatrix.mat4.rotate(
+                    //     me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                    //     glMatrix.glMatrix.toRadian(90),
+                    //     glMatrix.vec3.fromValues(-1, 0, 0)
+                    // );
+                    // glMatrix.mat4.rotate(
+                    //     me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                    //     glMatrix.glMatrix.toRadian(90),
+                    //     glMatrix.vec3.fromValues(0, 0, -1)
+                    // );
+                    // glMatrix.mat4.translate(
+                    //     me.Vinny_Overworld_Plaacegolder_2_CrossArms.world, me.Vinny_Overworld_Plaacegolder_2_CrossArms.world,
+                    //     glMatrix.vec4.fromValues(7, 0, 0)
+                    // );
 
                     //3rd
-                    me.Vinny_Overworld_Plaacegolder_3_CrossArms = new Model(
-                        me.gl,
-						mesh.vertices,
-						[].concat.apply([], mesh.faces),
-						mesh.normals,
-						mesh.texturecoords[0],
-                        null,
-                        me.Vinny_Texture,
-                        outline_color,
-                        'Vinny_4'
-                    );
-                    glMatrix.mat4.scale(
-                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
-                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
-                        me.vinny_scale
-                    );
-                    glMatrix.mat4.rotate(
-                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
-                        glMatrix.glMatrix.toRadian(90),
-                        glMatrix.vec3.fromValues(-1, 0, 0)
-                    );
-                    glMatrix.mat4.rotate(
-                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
-                        glMatrix.glMatrix.toRadian(90),
-                        glMatrix.vec3.fromValues(0, 0, -1)
-                    );
-                    glMatrix.mat4.translate(
-                        me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
-                        glMatrix.vec4.fromValues(9, 0, 0)
-                    );
+                    // me.Vinny_Overworld_Plaacegolder_3_CrossArms = new Model(
+                    //     me.gl,
+					// 	mesh.vertices,
+					// 	[].concat.apply([], mesh.faces),
+					// 	mesh.normals,
+					// 	mesh.texturecoords[0],
+                    //     null,
+                    //     me.Vinny_Texture,
+                    //     outline_color,
+                    //     'Vinny_4'
+                    // );
+                    // glMatrix.mat4.scale(
+                    //     me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                    //     me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                    //     me.vinny_scale
+                    // );
+                    // glMatrix.mat4.rotate(
+                    //     me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                    //     glMatrix.glMatrix.toRadian(90),
+                    //     glMatrix.vec3.fromValues(-1, 0, 0)
+                    // );
+                    // glMatrix.mat4.rotate(
+                    //     me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                    //     glMatrix.glMatrix.toRadian(90),
+                    //     glMatrix.vec3.fromValues(0, 0, -1)
+                    // );
+                    // glMatrix.mat4.translate(
+                    //     me.Vinny_Overworld_Plaacegolder_3_CrossArms.world, me.Vinny_Overworld_Plaacegolder_3_CrossArms.world,
+                    //     glMatrix.vec4.fromValues(9, 0, 0)
+                    // );
 
                     //4th
                     me.Vinny_Overworld_Plaacegolder_4_CrossArms = new Model(
@@ -904,6 +976,901 @@ DemoScene.prototype.Load = function (cb){
             }
         }
 
+        //Choso model
+        for (var i = 0; i < LoadResults.Models.Choso_lean.meshes.length; i++) {
+			var mesh = LoadResults.Models.Choso_lean.meshes[i];
+            
+            
+			switch (mesh.name) {
+				case 'Choso_lean':
+					me.Choso_lean = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Choso'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_lean.world,         
+                        me.Choso_lean.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_lean.world, me.Choso_lean.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_lean.world, me.Choso_lean.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, 1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_lean.world, me.Choso_lean.world,
+						glMatrix.vec4.fromValues(5, 0, 0)
+					);
+					break;
+				case 'Outline':
+					me.Choso_lean_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_lean_outline.world,         
+                        me.Choso_lean_outline.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_lean_outline.world, me.Choso_lean_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_lean_outline.world, me.Choso_lean_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, 1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_lean_outline.world, me.Choso_lean_outline.world,
+						glMatrix.vec4.fromValues(5, 0, 0)
+					);
+					break;
+                case 'Lamp':
+					me.Lamp = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Lamp.world,         
+                        me.Lamp.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Lamp.world, me.Lamp.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Lamp.world, me.Lamp.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, 1)
+					);
+					glMatrix.mat4.translate(
+						me.Lamp.world, me.Lamp.world,
+						glMatrix.vec4.fromValues(5, 0, 0)
+					);
+					break;
+                case 'Lamp_outline':
+					me.Lamp_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        light_outline_color,
+                        'Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Lamp_outline.world,         
+                        me.Lamp_outline.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Lamp_outline.world, me.Lamp_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Lamp_outline.world, me.Lamp_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, 1)
+					);
+					glMatrix.mat4.translate(
+						me.Lamp_outline.world, me.Lamp_outline.world,
+						glMatrix.vec4.fromValues(5, 0, 0)
+					);
+					break;
+                case 'Cone':
+					me.Cone = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Cone.world,         
+                        me.Cone.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Cone.world, me.Cone.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Cone.world, me.Cone.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, 1)
+					);
+					glMatrix.mat4.translate(
+						me.Cone.world, me.Cone.world,
+						glMatrix.vec4.fromValues(5, 0, 0)
+					);
+					break;
+            }
+        }
+
+        // Choso lean
+
+        for (var i = 0; i < LoadResults.Models.Choso_hip.meshes.length; i++) {
+			var mesh = LoadResults.Models.Choso_hip.meshes[i];
+            
+			switch (mesh.name) {
+				case 'Choso_hip':
+					me.Choso_hip = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_hip.world,         
+                        me.Choso_hip.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_hip.world, me.Choso_hip.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_hip.world, me.Choso_hip.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_hip.world, me.Choso_hip.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'Choso_hip_outline':
+					me.Choso_hip_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_hip_outline.world,         
+                        me.Choso_hip_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_hip_outline.world, me.Choso_hip_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_hip_outline.world, me.Choso_hip_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_hip_outline.world, me.Choso_hip_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //Choso shrug
+
+        for (var i = 0; i < LoadResults.Models.Choso_shrug.meshes.length; i++) {
+			var mesh = LoadResults.Models.Choso_shrug.meshes[i];
+            
+			switch (mesh.name) {
+				case 'Choso_shrug':
+					me.Choso_shrug = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_shrug.world,         
+                        me.Choso_shrug.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_shrug.world, me.Choso_shrug.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_shrug.world, me.Choso_shrug.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_shrug.world, me.Choso_shrug.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'Choso_shrug_outline':
+					me.Choso_shrug_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_shrug_outline.world,         
+                        me.Choso_shrug_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_shrug_outline.world, me.Choso_shrug_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_shrug_outline.world, me.Choso_shrug_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_shrug_outline.world, me.Choso_shrug_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //Choso point
+        for (var i = 0; i < LoadResults.Models.Choso_point.meshes.length; i++) {
+			var mesh = LoadResults.Models.Choso_point.meshes[i];
+            
+            
+			switch (mesh.name) {
+				case 'Choso_point':
+					me.Choso_point = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_point.world,         
+                        me.Choso_point.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_point.world, me.Choso_point.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_point.world, me.Choso_point.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_point.world, me.Choso_point.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'Choso_point_outline':
+					me.Choso_point_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Choso_point_outline.world,         
+                        me.Choso_point_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Choso_point_outline.world, me.Choso_point_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Choso_point_outline.world, me.Choso_point_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Choso_point_outline.world, me.Choso_point_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //Vergil model
+
+        for (var i = 0; i < LoadResults.Models.Vergil_chair.meshes.length; i++) {
+			var mesh = LoadResults.Models.Vergil_chair.meshes[i];
+            
+			switch (mesh.name) {
+				case 'Vergil_chair':
+					me.Vergil_chair = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vergil_Texture,
+                        outline_color_blue,
+                        'Vergil'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_chair.world,         
+                        me.Vergil_chair.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_chair.world, me.Vergil_chair.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_chair.world, me.Vergil_chair.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_chair.world, me.Vergil_chair.world,
+						glMatrix.vec4.fromValues(7, 0, 0)
+					);
+					break;
+				case 'Vergil_chair_outline':
+					me.Vergil_chair_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color_blue,
+                        'Vergil_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_chair_outline.world,         
+                        me.Vergil_chair_outline.world,         
+                        me.vinny_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_chair_outline.world, me.Vergil_chair_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_chair_outline.world, me.Vergil_chair_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_chair_outline.world, me.Vergil_chair_outline.world,
+						glMatrix.vec4.fromValues(7, 0, 0)
+					);
+					break;
+            }
+        }
+
+        //Vergil think
+        for (var i = 0; i < LoadResults.Models.Vergil_think.meshes.length; i++) {
+			var mesh = LoadResults.Models.Vergil_think.meshes[i];
+            
+			switch (mesh.name) {
+				case 'Vergil_think':
+					me.Vergil_think = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vergil_Texture,
+                        outline_color_blue,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_think.world,         
+                        me.Vergil_think.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_think.world, me.Vergil_think.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_think.world, me.Vergil_think.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_think.world, me.Vergil_think.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'Vergil_think_outline':
+					me.Vergil_think_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color_blue,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_think_outline.world,         
+                        me.Vergil_think_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_think_outline.world, me.Vergil_think_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_think_outline.world, me.Vergil_think_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_think_outline.world, me.Vergil_think_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //Vergil think
+        for (var i = 0; i < LoadResults.Models.Vergil_show.meshes.length; i++) {
+			var mesh = LoadResults.Models.Vergil_show.meshes[i];
+            
+			switch (mesh.name) {
+				case 'Vergil_show':
+					me.Vergil_show = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vergil_Texture,
+                        outline_color_blue,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_show.world,         
+                        me.Vergil_show.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_show.world, me.Vergil_show.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_show.world, me.Vergil_show.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_show.world, me.Vergil_show.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'Vergil_show_outline':
+					me.Vergil_show_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color_blue,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_show_outline.world,         
+                        me.Vergil_show_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_show_outline.world, me.Vergil_show_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_show_outline.world, me.Vergil_show_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_show_outline.world, me.Vergil_show_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //Vergil look
+        for (var i = 0; i < LoadResults.Models.Vergil_look.meshes.length; i++) {
+			var mesh = LoadResults.Models.Vergil_look.meshes[i];
+            
+            
+			switch (mesh.name) {
+				case 'Vergil_look':
+					me.Vergil_look = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Vergil_Texture,
+                        outline_color_blue,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_look.world,         
+                        me.Vergil_look.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_look.world, me.Vergil_look.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_look.world, me.Vergil_look.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_look.world, me.Vergil_look.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'Vergil_look_outline':
+					me.Vergil_look_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color_blue,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Vergil_look_outline.world,         
+                        me.Vergil_look_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Vergil_look_outline.world, me.Vergil_look_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Vergil_look_outline.world, me.Vergil_look_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Vergil_look_outline.world, me.Vergil_look_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //Dot model
+        for (var i = 0; i < LoadResults.Models.Dot.meshes.length; i++) {
+			var mesh = LoadResults.Models.Dot.meshes[i];
+            
+            
+			switch (mesh.name) {
+				case 'dot_base':
+					me.Dot_base = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Dot_Texture,
+                        outline_color_violet,
+                        'Doc'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_base.world,         
+                        me.Dot_base.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_base.world, me.Dot_base.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_base.world, me.Dot_base.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_base.world, me.Dot_base.world,
+						glMatrix.vec4.fromValues(9, 0, 0)
+					);
+					break;
+				case 'dot_base_outline':
+					me.Dot_base_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color_violet,
+                        'Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_base_outline.world,         
+                        me.Dot_base_outline.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_base_outline.world, me.Dot_base_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_base_outline.world, me.Dot_base_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_base_outline.world, me.Dot_base_outline.world,
+						glMatrix.vec4.fromValues(9, 0, 0)
+					);
+					break;
+            }
+        }
+
+        //dot shrug
+        for (var i = 0; i < LoadResults.Models.Dot_shrug.meshes.length; i++) {
+			var mesh = LoadResults.Models.Dot_shrug.meshes[i];
+            
+			switch (mesh.name) {
+				case 'dot_show':
+					me.Dot_show = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Dot_Texture,
+                        outline_color_violet,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_show.world,         
+                        me.Dot_show.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_show.world, me.Dot_show.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_show.world, me.Dot_show.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_show.world, me.Dot_show.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'dot_show_outline':
+					me.Dot_show_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color_violet,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_show_outline.world,         
+                        me.Dot_show_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_show_outline.world, me.Dot_show_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_show_outline.world, me.Dot_show_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_show_outline.world, me.Dot_show_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
+
+        //dot show
+        for (var i = 0; i < LoadResults.Models.Dot_show.meshes.length; i++) {
+			var mesh = LoadResults.Models.Dot_show.meshes[i];
+            console.log(mesh);
+            
+			switch (mesh.name) {
+				case 'dot_point':
+					me.Dot_point = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Dot_Texture,
+                        outline_color_violet,
+                        'Vinny'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_point.world,         
+                        me.Dot_point.world,         
+                        me.zero_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_point.world, me.Dot_point.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_point.world, me.Dot_point.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_point.world, me.Dot_point.world,
+						me.vinny_dialogue_position
+					);
+					break;
+				case 'dot_point_outline':
+					me.Dot_point_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        null,
+                        outline_color_violet,
+                        'Vinny_Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_point_outline.world,         
+                        me.Dot_point_outline.world,         
+                        me.zero_scale
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_point_outline.world, me.Dot_point_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_point_outline.world, me.Dot_point_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_point_outline.world, me.Dot_point_outline.world,
+						me.vinny_dialogue_position
+					);
+					break;
+            }
+        }
 
         // Ornstein model
         me.ornstein_position = glMatrix.vec4.fromValues(3, 44, 0);
@@ -937,7 +1904,6 @@ DemoScene.prototype.Load = function (cb){
 						me.Ornstein.world, me.Ornstein.world,
 						me.ornstein_position
 					);
-                    // me.Ornstein.baseWorld = glMatrix.mat4.clone(me.Ornstein.world);
 					break;
 				case 'Hair':
 					me.Ornstein_hair = new Model(
@@ -1026,18 +1992,19 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Vincent outline crossed arms mesh');
             return;
         }
-        if(!me.Vinny_Overworld_Plaacegolder_CrossArms){
-            cb('failed to load Vincent outline crossed arms mesh');
-            return;
-        }
-        if(!me.Vinny_Overworld_Plaacegolder_2_CrossArms){
-            cb('failed to load Vincent outline crossed arms mesh');
-            return;
-        }
-        if(!me.Vinny_Overworld_Plaacegolder_3_CrossArms){
-            cb('failed to load Vincent outline crossed arms mesh');
-            return;
-        }
+
+        // if(!me.Vinny_Overworld_Plaacegolder_CrossArms){
+        //     cb('failed to load Vincent outline crossed arms mesh');
+        //     return;
+        // }
+        // if(!me.Vinny_Overworld_Plaacegolder_2_CrossArms){
+        //     cb('failed to load Vincent outline crossed arms mesh');
+        //     return;
+        // }
+        // if(!me.Vinny_Overworld_Plaacegolder_3_CrossArms){
+        //     cb('failed to load Vincent outline crossed arms mesh');
+        //     return;
+        // }
          if(!me.Vinny_Overworld_Plaacegolder_4_CrossArms){
             cb('failed to load Vincent outline crossed arms mesh');
             return;
@@ -1054,14 +2021,144 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Ornstein hair mesh');
             return;
         }
+
+        if(!me.Choso_lean){
+            cb('failed to load Choso lean mesh');
+            return;
+        }
+        if(!me.Choso_lean_outline){
+            cb('failed to load Choso lean outline mesh');
+            return;
+        }
+        if(!me.Lamp){
+            cb('failed to load Lamp mesh');
+            return;
+        }
+        if(!me.Lamp_outline){
+            cb('failed to load Lamp outline mesh');
+            return;
+        }
+        if(!me.Cone){
+            cb('failed to load Cone mesh');
+            return;
+        }
+        if(!me.Choso_hip){
+            cb('failed to load Choso hip mesh');
+            return;
+        }
+        if(!me.Choso_hip_outline){
+            cb('failed to load Choso hip outline mesh');
+            return;
+        }
+        if(!me.Choso_shrug){
+            cb('failed to load Choso shrug outline mesh');
+            return;
+        }
+        if(!me.Choso_shrug_outline){
+            cb('failed to load Choso shrug outline mesh');
+            return;
+        }
+        if(!me.Choso_point){
+            cb('failed to load Choso point outline mesh');
+            return;
+        }
+        if(!me.Choso_point_outline){
+            cb('failed to load Choso point outline mesh');
+            return;
+        }
+
+
+        if(!me.Vergil_chair){
+            cb('failed to load Vergil chair outline mesh');
+            return;
+        }
+        if(!me.Vergil_chair_outline){
+            cb('failed to load Vergil chair outline mesh');
+            return;
+        }
+        if(!me.Vergil_think){
+            cb('failed to load Vergil_think mesh');
+            return;
+        }
+        if(!me.Vergil_think_outline){
+            cb('failed to load Vergil_think outline mesh');
+            return;
+        }
+        if(!me.Vergil_show){
+            cb('failed to load Vergil_show mesh');
+            return;
+        }
+        if(!me.Vergil_show_outline){
+            cb('failed to load Vergil_show outline mesh');
+            return;
+        }
+        if(!me.Vergil_look){
+            cb('failed to load Vergil_look mesh');
+            return;
+        }
+        if(!me.Vergil_look_outline){
+            cb('failed to load Vergil_look_outline outline mesh');
+            return;
+        }
+
+        if(!me.Dot_base){
+            cb('failed to load Dot_base  mesh');
+            return;
+        }
+        if(!me.Dot_base_outline){
+            cb('failed to load Dot_base_outline  mesh');
+            return;
+        }
+        if(!me.Dot_show){
+            cb('failed to load Dot_show  mesh');
+            return;
+        }
+        if(!me.Dot_show_outline){
+            cb('failed to load Dot_show_outline  mesh');
+            return;
+        }
+        if(!me.Dot_point){
+            cb('failed to load Dot_point  mesh');
+            return;
+        }
+        if(!me.Dot_point_outline){
+            cb('failed to load Dot_point_outline  mesh');
+            return;
+        }
+
+        
+        
+        
+        
+
+        
+
+        
+
+        
+        
+        
+
+        
+
+        
         
         // VARIABLES
-        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Vinny_Overworld_Plaacegolder_CrossArms, me.Vinny_Overworld_Plaacegolder_2_CrossArms, me.Vinny_Overworld_Plaacegolder_3_CrossArms, me.Vinny_Overworld_Plaacegolder_4_CrossArms, me.PlaneMesh];
-        me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms];
+        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Choso_lean, me.Lamp, me.Vinny_Overworld_Plaacegolder_4_CrossArms, me.PlaneMesh, me.Choso_hip, me.Choso_shrug, me.Choso_point, me.Vergil_chair, me.Vergil_think, me.Vergil_show, me.Vergil_look, me.Dot_base, me.Dot_show, me.Dot_point, me.Cone];//cone is always last
+        me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms, me.Choso_lean_outline, me.Lamp_outline, me.Choso_hip_outline, me.Choso_shrug_outline, me.Choso_point_outline, me.Vergil_chair_outline, me.Vergil_think_outline, me.Vergil_show_outline, me.Vergil_look_outline, me.Dot_base_outline, me.Dot_show_outline, me.Dot_point_outline];
         me.Dialogue_Meshes = [
             me.Vinny_Crossed_arms, me.Vinny_Outline_crossed_arms,
             me.Vinny_Point_Palm, me.Vinny_Outline_point_palm,
-            me.Vinny_Point_Up, me.Vinny_Outline_point_up
+            me.Vinny_Point_Up, me.Vinny_Outline_point_up,
+            me.Choso_hip, me.Choso_hip_outline,
+            me.Choso_shrug, me.Choso_shrug_outline,
+            me.Choso_point, me.Choso_point_outline,
+            me.Vergil_think, me.Vergil_think_outline,
+            me.Vergil_show, me.Vergil_show_outline,
+            me.Vergil_look, me.Vergil_look_outline,
+            me.Dot_base, me.Dot_base_outline,
+            me.Dot_show, me.Dot_show_outline,
+            me.Dot_point, me.Dot_point_outline
         ]
         me.Dither_Meshes = [me.BallMesh];
         me.NormalMeshes = [me.BoxMesh]; //me.BoxMesh
@@ -1191,6 +2288,8 @@ DemoScene.prototype.Load = function (cb){
             mProj: me.gl.getUniformLocation(me.NoShadowProgram, 'mProj'),
 
             pointLightPosition: me.gl.getUniformLocation(me.NoShadowProgram, 'pointLightPosition'),
+            alpha: me.gl.getUniformLocation(me.NoShadowProgram, 'alpha'),
+            diffuseTexture: me.gl.getUniformLocation(me.NoShadowProgram, 'sampler'),
 			// meshColor: me.gl.getUniformLocation(me.NoShadowProgram, 'meshColor')
 
         };
@@ -1330,8 +2429,8 @@ DemoScene.prototype.Load = function (cb){
 
 
         me.camera = new Camera(
-            glMatrix.vec3.fromValues(-1, 0.4, 0),
-            glMatrix.vec3.fromValues(0, 0.4, 0),
+            glMatrix.vec3.fromValues(-1, 0.5, -1),
+            glMatrix.vec3.fromValues(0, 0.5, 0),
             glMatrix.vec3.fromValues(0, 1, 0)
         );
 
@@ -1574,7 +2673,7 @@ DemoScene.prototype._Update = function (dt) {
     this.rayOrigin = this.camera.position;
     this.rayDirection = this.camera.forward;
     this.rayLength = 3;
-    this.intersectRadius = 0.5;
+    this.intersectRadius = 0.6;
     this.maxInteractionRange = 1;
 
     for (let model of this.Meshes) {
@@ -1772,7 +2871,11 @@ DemoScene.prototype._Render = function () {
     gl.uniformMatrix4fv(this.NoShadowProgram.uniforms.mView, gl.FALSE, this.viewMatrix);
     gl.uniform3fv(this.NoShadowProgram.uniforms.pointLightPosition, this.lightPosition);
 
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
    
+
     
 
     // Draw meshes
@@ -1790,6 +2893,12 @@ DemoScene.prototype._Render = function () {
             gl.FALSE,
             this.Meshes[i].world
         );
+
+        if (this.Meshes[i] === this.Cone) {
+            gl.uniform1f(this.NoShadowProgram.uniforms.alpha, 0.8);
+        } else {
+            gl.uniform1f(this.NoShadowProgram.uniforms.alpha, 1.0);
+        }
         
 
         // Set Atribs
@@ -2284,10 +3393,30 @@ DemoScene.prototype.Show_Ball  = function(is_ball_showing){
 }
 
 DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
+    //VINNY
     // 0 - crossed arms
     // 2 - palm
     // 4 - point up
-    //20 - Show Box Mesh
+
+    //CHOSO
+    //6 - hip
+    //8 - shrug
+    //10 - point
+
+    //VERGIL
+    //12 - think
+    //14 - show
+    //16 - look
+
+    //DOTTORE
+    //18 - neutytral
+    //20 - shruh
+    //22 - show
+
+
+
+    //MISC
+    //50 - Show Box Mesh //changed from 20
     //30 - Ornstein helm 
     //40 - Plane/Picture Mesh
 
@@ -2350,7 +3479,7 @@ DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
         return;
     }
 
-    if (current_mesh >= 20 && current_mesh < 30){
+    if (current_mesh >= 50 && current_mesh < 60){
         glMatrix.mat4.identity(this.BoxMesh.world);
         if (current_mesh == 20){
             glMatrix.mat4.scale(

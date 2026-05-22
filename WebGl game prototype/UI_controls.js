@@ -84,7 +84,7 @@ function InitiateConversation(name, can_start_convo, is_starting) {
     // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
     //     return;
     // }
-    if (name != "Vinny_2" && name != "Vincent" && name != "Vinny_3" && name != "Vinny_4" && name != "Vinny_5"){
+    if (name != "Doc" && name != "Vergil" && name != "Choso" && name != "Vincent" && name != "Vinny_3" && name != "Vinny_4" && name != "Vinny_5"){
         return;
     }
     // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);
@@ -125,7 +125,22 @@ function Begin_Dialogue(name){
             Math.PI / 2,   // yaw (left/right)
             0.0            // pitch (up/down)
         );
-        Demo.Dialogue_Meshes_rescale(0);
+
+        switch (name){
+            case 'Vincent': 
+                Demo.Dialogue_Meshes_rescale(0);
+                break;
+            case 'Choso': 
+                Demo.Dialogue_Meshes_rescale(6);
+                break;
+            case 'Vergil': 
+                Demo.Dialogue_Meshes_rescale(12);
+                break;
+            case 'Doc': 
+                Demo.Dialogue_Meshes_rescale(18);
+                break;
+        }
+        
         Demo._OnResizeWindow();
 
         iris.classList.remove("start");
@@ -151,19 +166,19 @@ function Begin_Dialogue(name){
             button_2.innerHTML = "I did not"
             dialogue_progression = "END_DIALOGUE"
         }
-        else if (name == "Vinny_2" && did_learn_about_normals == true){
+        else if (name == "Choso" && did_learn_about_normals == true){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
             dialogue_progression = "END_DIALOGUE"
         }
-        else if (name == "Vinny_3" && did_learn_about_specular == true){
+        else if (name == "Vergil" && did_learn_about_specular == true){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
             dialogue_progression = "END_DIALOGUE"
         }
-        else if (name == "Vinny_4" && did_learn_about_pp == true){
+        else if (name == "Doc" && did_learn_about_pp == true){
             d_text = "I hope you enjoyed this little lesson!"
             button_1.innerHTML = "I did!"
             button_2.innerHTML = "I did not"
@@ -182,13 +197,13 @@ function Begin_Dialogue(name){
             d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding.";
             dialogue_progression = 0;
         }
-        else if (name == "Vinny_3" && did_learn_about_normals == false){
+        else if (name == "Vergil" && did_learn_about_normals == false){
             d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
             button_1.innerHTML = "Okay."
             button_2.innerHTML = "Later then."
             dialogue_progression = "END_DIALOGUE";
         }
-        else if (name == "Vinny_4" && did_learn_about_specular == false){
+        else if (name == "Doc" && did_learn_about_specular == false){
             d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
             button_1.innerHTML = "Okay."
             button_2.innerHTML = "Later then."
@@ -206,20 +221,20 @@ function Begin_Dialogue(name){
         //     button_1.innerHTML = "OK"
         //     button_2.innerHTML = "See ya!"
         // }
-        else if(name == "Vinny_2")
+        else if(name == "Choso")
         {
             d_text = "I look quite plain today, don't I?";
             button_1.innerHTML = "You do"
             button_2.innerHTML = "You look nice!"
             dialogue_progression = "Normal_Map_Start"
         }
-        else if (name == "Vinny_3" && did_learn_about_normals == true){
+        else if (name == "Vergil" && did_learn_about_normals == true){
             d_text = "Oh, you are done talking to the others? Then it is my turn to shine!"
             button_1.innerHTML = "Indeed."
             button_2.innerHTML = "Let's start."
             dialogue_progression = "Specular_start";
         }
-        else if (name == "Vinny_4" && did_learn_about_pp == false){
+        else if (name == "Doc" && did_learn_about_pp == false){
             d_text = "Let's move on to something completely different, shall we?"
             button_1.innerHTML = "completely different?"
             button_2.innerHTML = "Let's!"
@@ -546,7 +561,7 @@ function vinny_dialogue_progression(buttonNumber){
             break;
         case "Normal_Map_2":
             if(buttonNumber == 1){
-                Demo.Dialogue_Meshes_rescale(0);
+                Demo.Dialogue_Meshes_rescale(6);
                 d_text = "Have you ever thought about how games have very detailed surfaces and items, yet still run well in your machine?";
                 button_1.innerHTML = "Yes, I wonder how";
                 button_2.innerHTML = "Never thought of it";
@@ -556,7 +571,7 @@ function vinny_dialogue_progression(buttonNumber){
                 dialogue_progression = "Normal_Map_3";
             }
             if(buttonNumber == 2){
-                Demo.Dialogue_Meshes_rescale(4);
+                Demo.Dialogue_Meshes_rescale(10);
                 d_text = "A vertex is a point in 3D space where 2 or more edges meet. They form the corners of 3D models.";
                 button_1.innerHTML = "Understood";
                 type_letters(d_text, true, false, false, false);
@@ -564,15 +579,15 @@ function vinny_dialogue_progression(buttonNumber){
             }
             break;
         case "Normal_Map_3":
-            Demo.Dialogue_Meshes_rescale(4);
+            Demo.Dialogue_Meshes_rescale(10);
             d_text = "That is done with the help of bump or normal maps. They are textures, that determine how the light reflects on an object.";
             button_1.innerHTML = "Can you demonstrate?";
             type_letters(d_text, true, false, false, false);
             dialogue_progression = "Normal_Map_5";
             break;
         case "Normal_Map_5":
-            Demo.Dialogue_Meshes_rescale(2);
-            Demo.Dialogue_Meshes_rescale(20);
+            Demo.Dialogue_Meshes_rescale(8);
+            Demo.Dialogue_Meshes_rescale(50);
             d_text = "Sure, look at this cube. It's just a cube, but you can clearly see the indents around the numbers";
             button_1.innerHTML = "How does that work?";
             type_letters(d_text, true, false, false, false);
@@ -587,14 +602,14 @@ function vinny_dialogue_progression(buttonNumber){
             break;
         case "Normal_Map_7":
             if(buttonNumber == 1){
-                Demo.Dialogue_Meshes_rescale(4);
+                Demo.Dialogue_Meshes_rescale(10);
                 d_text = "To simplify, a normal is the direction a plane is facing. The direction is determined by the verices in 3d space.";
                 button_1.innerHTML = "->";
                 type_letters(d_text, true, false, false, false);
                 dialogue_progression = "Normal_Map_7_2";
             }
             if(buttonNumber == 2){
-                Demo.Dialogue_Meshes_rescale(2);
+                Demo.Dialogue_Meshes_rescale(6);
                 Demo.changeNormalShaderRenderResult(1);
                 d_text = "This is what it looks like. The blue color chanel represents the Z axis. We barely change it, so the texture always has a blue/purplue hue.";
                 button_1.innerHTML = "Can I change it?";
@@ -622,7 +637,7 @@ function vinny_dialogue_progression(buttonNumber){
             dialogue_progression = "Normal_Map_7";
             break;
         case "Normal_Map_8":
-            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(6);
             showDrawingArea();
             Demo.changeNormalShaderRenderResult(0);
             d_text = "It is unconventional, however, you CAN draw it yourself. Give it a try!";
@@ -644,7 +659,7 @@ function vinny_dialogue_progression(buttonNumber){
             break;
         case "Normal_Map_end":
             hideDrawingArea();
-            Demo.Dialogue_Meshes_rescale(21);
+            Demo.Dialogue_Meshes_rescale(51);
             d_text = "";
             button_1.innerHTML = "";
             type_letters(d_text, false, false, false, false);
@@ -663,14 +678,14 @@ function vinny_dialogue_progression(buttonNumber){
             dialogue_progression = "Specular_1";
             break;
         case "Specular_1":
-            Demo.Dialogue_Meshes_rescale(4);
+            Demo.Dialogue_Meshes_rescale(16);
             d_text = "Intensity, or in other words, how reflective (shiny or matte) a material is!";
             button_1.innerHTML = "Okay, explain.";
             type_letters(d_text, true, false, false, false);
             dialogue_progression = "Specular_2";
             break;
         case "Specular_2":
-            Demo.Dialogue_Meshes_rescale(2);
+            Demo.Dialogue_Meshes_rescale(14);
             Demo.Dialogue_Meshes_rescale(30);
             Demo.configureSpecular(false, false);
             d_text = "Take a look at this helmet. It's made of some kind of metal, so we make it shiny to reflect that!";
@@ -681,7 +696,7 @@ function vinny_dialogue_progression(buttonNumber){
             dialogue_progression = "Specular_3";
             break
         case "Specular_3":
-            Demo.Dialogue_Meshes_rescale(4);
+            Demo.Dialogue_Meshes_rescale(16);
             d_text = "This is called 'Specular light'. Unlike other forms of lighting, it creates a specular highlight, a bright spot on the surface of the object.";
             button_1.innerHTML = "->";
             type_letters(d_text, true, false, false, false);
@@ -695,9 +710,9 @@ function vinny_dialogue_progression(buttonNumber){
             dialogue_progression = "Specular_5";
             break;
         case "Specular_5":
-            Demo.Dialogue_Meshes_rescale(21);
+            Demo.Dialogue_Meshes_rescale(51);
             if(buttonNumber == 1){
-                Demo.Dialogue_Meshes_rescale(20);
+                Demo.Dialogue_Meshes_rescale(50);
                 Demo.Set_Crate_example(false)
                 Demo.configureSpecular(false, false);
                 d_text = "Normal maps, as you can see on the box, specifically dictate the direction of a reflection, not the intensity.";
@@ -722,7 +737,7 @@ function vinny_dialogue_progression(buttonNumber){
             }
             break;
             case "Specular_5_2_2":
-            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(12);
             Demo.Set_Crate_example(true);
             d_text = "However, you can use specular lighting with normal maps to add a reflection. You can mix and match various shader methods in your code.";
             button_1.innerHTML = "->";
@@ -745,7 +760,7 @@ function vinny_dialogue_progression(buttonNumber){
             dialogue_progression = "Specular_5";
             break;
         case "Specular_7":
-            Demo.Dialogue_Meshes_rescale(2);
+            Demo.Dialogue_Meshes_rescale(14);
             Demo.configureSpecular(true, false);
             d_text = "This is far more accurate to how it should look like. Note that we only changed where and how reflective the surface is, not the direction of the reflection!";
             button_1.innerHTML = "I think I undertand.";
@@ -755,7 +770,7 @@ function vinny_dialogue_progression(buttonNumber){
             dialogue_progression = "Specular_8";
             break;
         case "Specular_8":
-            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(12);
             Demo.Dialogue_Meshes_rescale(31);
             is_quiz_visable(true);
             d_text = "You don't sound very confident about your understanding, so let's do a little test. Fill in the blanks with the correct words.";
@@ -931,7 +946,7 @@ function vinny_dialogue_progression(buttonNumber){
         case "PostProcess_10":
             pp_controller[0].style.display = "flex";
             Demo.useDither = false;
-            Demo.Dialogue_Meshes_rescale(10);
+            Demo.Dialogue_Meshes_rescale(24);
             Demo.ornstein_position = glMatrix.vec4.fromValues(1.5, 44, 0);
             Demo.Dialogue_Meshes_rescale(30);
             Demo.configureSpecular(true);
@@ -953,7 +968,7 @@ function vinny_dialogue_progression(buttonNumber){
         case "PostProcess_12":
             pp_reset();
             Demo.Dialogue_Meshes_rescale(41);
-            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(22);
             d_text = "And lastly, make the rainbow effect, the dotted effect and a blue hue.";
             button_1.innerHTML = "Check";
             dialogue_progression = "PostProcess_game_3";
@@ -962,7 +977,7 @@ function vinny_dialogue_progression(buttonNumber){
         case "PostProcess_13":
             pp_controller[0].style.display = "none";
             pp_reset();
-            Demo.Dialogue_Meshes_rescale(0);
+            Demo.Dialogue_Meshes_rescale(18);
             d_text = "You fulfilled all my requests. I am now sure you understand the basic post processing effects!";
             button_1.innerHTML = "End Lesson";
             dialogue_progression = "PostProcess_end";

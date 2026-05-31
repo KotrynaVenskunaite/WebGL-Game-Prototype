@@ -127,6 +127,7 @@
     align-items: center;
     color: white;
     container-type: size;
+    font-family: monospace;
 }
 
 #author_inf{
@@ -139,7 +140,7 @@
     color: white;
     border: 3px solid white;
     font-size: clamp(1rem, 2cqw, 2rem);
-    padding: 3%;
+    padding: 1%;
 }
 
 #line_one{
@@ -745,7 +746,6 @@
   padding: 5px 0;
   position: absolute;
   z-index: 1;
-
   top: 130%;
   left: 65%;
   margin-left: -65px;

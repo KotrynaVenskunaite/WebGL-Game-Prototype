@@ -28,6 +28,7 @@ DemoScene.prototype.Load = function (cb){
                 'Vergil_show': 'Models/vergil_show.json',
                 'Vergil_look': 'Models/vergil_look.json',
 
+                'Dot_ov': 'Models/dottore_ov.json',
                 'Dot': 'Models/dottore.json',
                 'Dot_shrug': 'Models/dottore_shrug.json',
                 'Dot_show': 'Models/dottore_show.json',
@@ -347,7 +348,13 @@ DemoScene.prototype.Load = function (cb){
         var box_color = glMatrix.vec4.fromValues(1.0, 1.0, 1.0, 1);
         me.box_scale = glMatrix.vec3.fromValues(1.3, 1.3, 1.3);
 
-        let tangents = generateTangents(BoxModel.meshes[0].vertices, BoxModel.meshes[0].normals, BoxModel.meshes[0].texturecoords[0], [].concat.apply([], BoxModel.meshes[0].faces));
+        let tangents = generateTangents(
+            BoxModel.meshes[0].vertices, 
+            BoxModel.meshes[0].normals, 
+            BoxModel.meshes[0].texturecoords[0], 
+            [].concat.apply([], 
+            BoxModel.meshes[0].faces
+        ));
 
 
         me.BoxMesh = new Model (
@@ -1011,7 +1018,7 @@ DemoScene.prototype.Load = function (cb){
 					);
 					glMatrix.mat4.translate(
 						me.Choso_lean.world, me.Choso_lean.world,
-						glMatrix.vec4.fromValues(5, 0, 0)
+						glMatrix.vec4.fromValues(-4, 6, 0)
 					);
 					break;
 				case 'Outline':
@@ -1043,7 +1050,7 @@ DemoScene.prototype.Load = function (cb){
 					);
 					glMatrix.mat4.translate(
 						me.Choso_lean_outline.world, me.Choso_lean_outline.world,
-						glMatrix.vec4.fromValues(5, 0, 0)
+						glMatrix.vec4.fromValues(-4, 6, 0)
 					);
 					break;
                 case 'Lamp':
@@ -1075,7 +1082,7 @@ DemoScene.prototype.Load = function (cb){
 					);
 					glMatrix.mat4.translate(
 						me.Lamp.world, me.Lamp.world,
-						glMatrix.vec4.fromValues(5, 0, 0)
+						glMatrix.vec4.fromValues(-4, 6, 0)
 					);
 					break;
                 case 'Lamp_outline':
@@ -1107,7 +1114,7 @@ DemoScene.prototype.Load = function (cb){
 					);
 					glMatrix.mat4.translate(
 						me.Lamp_outline.world, me.Lamp_outline.world,
-						glMatrix.vec4.fromValues(5, 0, 0)
+						glMatrix.vec4.fromValues(-4, 6, 0)
 					);
 					break;
                 case 'Cone':
@@ -1139,7 +1146,7 @@ DemoScene.prototype.Load = function (cb){
 					);
 					glMatrix.mat4.translate(
 						me.Cone.world, me.Cone.world,
-						glMatrix.vec4.fromValues(5, 0, 0)
+						glMatrix.vec4.fromValues(-4, 6, 0)
 					);
 					break;
             }
@@ -1675,7 +1682,7 @@ DemoScene.prototype.Load = function (cb){
                     glMatrix.mat4.scale(
                         me.Dot_base.world,         
                         me.Dot_base.world,         
-                        me.vinny_scale // scale X/Y/Z
+                        me.zero_scale // scale X/Y/Z
                     );
 					glMatrix.mat4.rotate(
 						me.Dot_base.world, me.Dot_base.world,
@@ -1707,7 +1714,7 @@ DemoScene.prototype.Load = function (cb){
                     glMatrix.mat4.scale(
                         me.Dot_base_outline.world,         
                         me.Dot_base_outline.world,         
-                        me.vinny_scale // scale X/Y/Z
+                        me.zero_scale // scale X/Y/Z
                     );
 					glMatrix.mat4.rotate(
 						me.Dot_base_outline.world, me.Dot_base_outline.world,
@@ -1721,6 +1728,79 @@ DemoScene.prototype.Load = function (cb){
 					);
 					glMatrix.mat4.translate(
 						me.Dot_base_outline.world, me.Dot_base_outline.world,
+						glMatrix.vec4.fromValues(9, 0, 0)
+					);
+					break;
+            }
+        }
+
+        //Dot overworld
+        for (var i = 0; i < LoadResults.Models.Dot_ov.meshes.length; i++) {
+			var mesh = LoadResults.Models.Dot_ov.meshes[i];
+            
+            
+			switch (mesh.name) {
+				case 'overworld_dot':
+					me.Dot_ov = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Dot_Texture,
+                        outline_color_violet,
+                        'Doc'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_ov.world,         
+                        me.Dot_ov.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_ov.world, me.Dot_ov.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_ov.world, me.Dot_ov.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_ov.world, me.Dot_ov.world,
+						glMatrix.vec4.fromValues(9, 0, 0)
+					);
+					break;
+				case 'overworld_dot_outline':
+					me.Dot_ov_outline = new Model(
+						me.gl,
+						mesh.vertices,
+						[].concat.apply([], mesh.faces),
+						mesh.normals,
+						mesh.texturecoords[0],
+                        null,
+                        me.Choso_Texture,
+                        outline_color_violet,
+                        'Outline'
+					);
+                    glMatrix.mat4.scale(
+                        me.Dot_ov_outline.world,         
+                        me.Dot_ov_outline.world,         
+                        me.vinny_scale // scale X/Y/Z
+                    );
+					glMatrix.mat4.rotate(
+						me.Dot_ov_outline.world, me.Dot_ov_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(-1, 0, 0)
+					);
+                    glMatrix.mat4.rotate(
+						me.Dot_ov_outline.world, me.Dot_ov_outline.world,
+						glMatrix.glMatrix.toRadian(90),
+                        glMatrix.vec3.fromValues(0, 0, -1)
+					);
+					glMatrix.mat4.translate(
+						me.Dot_ov_outline.world, me.Dot_ov_outline.world,
 						glMatrix.vec4.fromValues(9, 0, 0)
 					);
 					break;
@@ -2125,6 +2205,15 @@ DemoScene.prototype.Load = function (cb){
             cb('failed to load Dot_point_outline  mesh');
             return;
         }
+        if(!me.Dot_ov){
+            cb('failed to load Dot_ov  mesh');
+            return;
+        }
+        if(!me.Dot_ov_outline){
+            cb('failed to load Dot_ov_outline  mesh');
+            return;
+        }
+
 
         
         
@@ -2144,8 +2233,8 @@ DemoScene.prototype.Load = function (cb){
         
         
         // VARIABLES
-        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Choso_lean, me.Lamp, me.Vinny_Overworld_Plaacegolder_4_CrossArms, me.PlaneMesh, me.Choso_hip, me.Choso_shrug, me.Choso_point, me.Vergil_chair, me.Vergil_think, me.Vergil_show, me.Vergil_look, me.Dot_base, me.Dot_show, me.Dot_point, me.Cone];//cone is always last
-        me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms, me.Choso_lean_outline, me.Lamp_outline, me.Choso_hip_outline, me.Choso_shrug_outline, me.Choso_point_outline, me.Vergil_chair_outline, me.Vergil_think_outline, me.Vergil_show_outline, me.Vergil_look_outline, me.Dot_base_outline, me.Dot_show_outline, me.Dot_point_outline];
+        me.Meshes = [ me.Vinny_start, me.Book, me.Bench, me.Vinny_Point_Palm, me.Vinny_Point_Up, me.Vinny_Crossed_arms, me.Choso_lean, me.Lamp, me.Vinny_Overworld_Plaacegolder_4_CrossArms, me.PlaneMesh, me.Choso_hip, me.Choso_shrug, me.Choso_point, me.Vergil_chair, me.Vergil_think, me.Vergil_show, me.Vergil_look, me.Dot_base, me.Dot_show, me.Dot_point,me.Dot_ov, me.Cone];//cone is always last
+        me.Outlines = [me.Vinny_Outline_point_palm,me.Vinny_Outline_start,me.Book_Outline,me.Bench_Outline,me.Vinny_Outline_point_up,me.Vinny_Outline_crossed_arms, me.Choso_lean_outline, me.Lamp_outline, me.Choso_hip_outline, me.Choso_shrug_outline, me.Choso_point_outline, me.Vergil_chair_outline, me.Vergil_think_outline, me.Vergil_show_outline, me.Vergil_look_outline, me.Dot_base_outline, me.Dot_show_outline, me.Dot_point_outline, me.Dot_ov_outline];
         me.Dialogue_Meshes = [
             me.Vinny_Crossed_arms, me.Vinny_Outline_crossed_arms,
             me.Vinny_Point_Palm, me.Vinny_Outline_point_palm,
@@ -2423,7 +2512,7 @@ DemoScene.prototype.Load = function (cb){
         //
 
         me.is_camera_ortho = false;
-        me.can_cam_move = true;
+        me.can_cam_move = false;
 
         
 
@@ -3412,7 +3501,6 @@ DemoScene.prototype.Dialogue_Meshes_rescale = function(current_mesh){
     //18 - neutytral
     //20 - shruh
     //22 - show
-
 
 
     //MISC

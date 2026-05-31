@@ -143,7 +143,7 @@ void main(void) {
     color += pow(dotVR, materialShininess) * materialSpecular.rgb * lightColor.rgb;
   }
 
-  // finally, set frag color
+  //frag color
   // keep alpha as original material diffuse has
   if(renderResult == 0) {
     gl_FragColor = vec4(color * attenuation, materialDiffuse.a);

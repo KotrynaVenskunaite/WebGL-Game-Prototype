@@ -28,10 +28,10 @@ void main(void) {
   gl_Position = matrixModelViewProjection * vec4(vertexPosition, ONE);
 
   // transform the normal vector from object space to eye space
-  normalVec = (matrixNormal * vec4(vertexNormal, ONE)).xyz;//Changed value from ONE
+  normalVec = (matrixNormal * vec4(vertexNormal, ONE)).xyz;
 
   // get tangent vector in eye space
-  tangentVec = (matrixNormal * vec4(vertexTangent, ONE)).xyz; //Changed value from ONE
+  tangentVec = (matrixNormal * vec4(vertexTangent, ONE)).xyz;
 
   // compute binormal (bitangent) in eye space
   binormalVec = normalize(cross(normalVec, tangentVec));

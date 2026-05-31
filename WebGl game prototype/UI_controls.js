@@ -4,7 +4,12 @@ const iris = document.getElementById("iris");
 const dialogue = document.getElementById("dialog_text_text");
 const dialogue_name = document.getElementById("dialog_name");
 const dialogue_box = document.getElementById("dialogue_box");
+const quit_buttons = document.getElementById("quit_buttons");
 const dither_image = document.getElementById("dither_image");
+const instructions = document.getElementById("instructions");
+const home = document.getElementById("home_btn");
+const skip = document.getElementById("skip");
+
 
 const pp_controller = document.getElementsByClassName("PP_game_area");
 
@@ -21,6 +26,32 @@ button_3.addEventListener("click", () => vinny_dialogue_progression(3));
 button_4.addEventListener("click", () => vinny_dialogue_progression(4));
 
 document.addEventListener('click', cancelDialogue);
+home.addEventListener("click", End_Dialogue);
+skip.addEventListener("click", skipLesson);
+
+function skipLesson(){
+    End_Dialogue();
+    if (did_learn_about_dither == false){
+        did_learn_about_dither = true;
+        return;
+    }
+    if (did_learn_about_normals == false){
+        did_learn_about_normals = true;
+        return;
+    }
+    if (did_learn_about_specular == false){
+        did_learn_about_specular = true;
+        return;
+    }
+    if (did_learn_about_pp == false){
+        did_learn_about_pp = true;
+        return;
+    }
+    if (did_learn_about_sobel == false){
+        did_learn_about_sobel = true;
+        return;
+    }
+}
 
 function onButton1Click() {
     if (dialogue_progression === "Specular_8_check" || dialogue_progression === "Specular_quiz_bad") {
@@ -63,9 +94,11 @@ var img = document.createElement("img");
 var d_text = 'Placeholder text';
 var language = "eng"
 var dialogue_progression = 0;
-var is_in_dialogue = false
+var is_in_dialogue = false;
 var did_skip_dialogue = false;
 var can_skip_dialogue = false;
+var is_paused = true;
+// var can_quit_buttons_show = true;
 
 var did_learn_about_dither = false;
 var did_learn_about_normals = false;
@@ -79,12 +112,17 @@ img.style.width = "50";   // optional
 img.style.height = "50px";
 img.style.opacity = "0.8"; 
 
+
+
 function InitiateConversation(name, can_start_convo, is_starting) {
 
     // if (name == "Book" || name == "Bench" || name == "Vinny" || name == "Box"){
     //     return;
     // }
     if (name != "Doc" && name != "Vergil" && name != "Choso" && name != "Vincent" && name != "Vinny_3" && name != "Vinny_4" && name != "Vinny_5"){
+        return;
+    }
+    if (is_paused == true){
         return;
     }
     // console.log("name: ", name, "can start convo? ", can_start_convo, "is in dialogue? ", is_in_dialogue);
@@ -150,6 +188,7 @@ function Begin_Dialogue(name){
         button_2.innerHTML = "Could share them with me?"
 
         dialogue_box.style.display = "flex";
+        instructions.style.display = "none";
         // button_1.style.display = "flex";
         // button_2.style.display = "flex";
         // name.style.display = "flex";
@@ -194,53 +233,43 @@ function Begin_Dialogue(name){
        
         else if(language == "eng" && name == "Vincent")
         {
+            quit_buttons.style.display = "flex";
             d_text = "Oh Hello. I was just reading about some some techniques to help me out with some color banding.";
             dialogue_progression = 0;
         }
-        else if (name == "Vergil" && did_learn_about_normals == false){
+        else if ((name == "Vergil" && did_learn_about_normals == false) || (name == "Doc" && did_learn_about_specular == false) || (name == "Vinny_5" && did_learn_about_pp == false)){
+            quit_buttons.style.display = "none";
             d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
             button_1.innerHTML = "Okay."
             button_2.innerHTML = "Later then."
             dialogue_progression = "END_DIALOGUE";
         }
-        else if (name == "Doc" && did_learn_about_specular == false){
-            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
-            button_1.innerHTML = "Okay."
-            button_2.innerHTML = "Later then."
-            dialogue_progression = "END_DIALOGUE";
-        }
-        else if (name == "Vinny_5" && did_learn_about_pp == false){
-            d_text = "Please speak to others first, I'm afraid you will have a hard time understanding me otherwise";
-            button_1.innerHTML = "Okay."
-            button_2.innerHTML = "Later then."
-            dialogue_progression = "END_DIALOGUE";
-        }
-        // else if(name == "Vinny_2" && dialogue_progression != "dither_end")
-        // {
-        //     d_text = "I have something important to share, but I'm afraid you will have to talk to someone lese first.";
-        //     button_1.innerHTML = "OK"
-        //     button_2.innerHTML = "See ya!"
-        // }
+
+        //DIALOGUE PROEPR START
         else if(name == "Choso")
         {
+            quit_buttons.style.display = "flex";
             d_text = "I look quite plain today, don't I?";
             button_1.innerHTML = "You do"
             button_2.innerHTML = "You look nice!"
             dialogue_progression = "Normal_Map_Start"
         }
         else if (name == "Vergil" && did_learn_about_normals == true){
+            quit_buttons.style.display = "flex";
             d_text = "Oh, you are done talking to the others? Then it is my turn to shine!"
             button_1.innerHTML = "Indeed."
             button_2.innerHTML = "Let's start."
             dialogue_progression = "Specular_start";
         }
         else if (name == "Doc" && did_learn_about_pp == false){
+            quit_buttons.style.display = "flex";
             d_text = "Let's move on to something completely different, shall we?"
             button_1.innerHTML = "completely different?"
             button_2.innerHTML = "Let's!"
             dialogue_progression = "PostProcess_start";
         }
         else if (name == "Vinny_5" && did_learn_about_sobel == false){
+            quit_buttons.style.display = "flex";
             d_text = "Post processing is used for more than just RGB value manipulation. It can accoplish complex results by analyzing pixels."
             button_1.innerHTML = "For example?"
             button_2.innerHTML = "How complex?"
@@ -258,31 +287,38 @@ function Begin_Dialogue(name){
 
 function End_Dialogue(){
     iris.classList.add("start");
+    d_text = ""
+    button_1.innerHTML = ""
+    type_letters(d_text, false, false, false, false);
+    quit_buttons.style.display = "none";
+    
     setTimeout(() => {
-        Demo.Dialogue_Meshes_rescale(10);
+        Demo.Dialogue_Meshes_rescale(24);
         Demo.Show_Ball(false);
         Demo.is_camera_ortho = false;
         Demo.camera.position = glMatrix.vec3.fromValues(-1, 0.4, 0);
-        // Demo.camera.setRotation(
-        //     Math.PI / 2,   // yaw (left/right)
-        //     0.0            // pitch (up/down)
-        // );
-        // Demo.Dialogue_Meshes_rescale(0);
         Demo._OnResizeWindow();
 
         iris.classList.remove("start");
 
-        // dialogue_name.innerHTML = name.toUpperCase() ;
-        // button_1.innerHTML = "What is color banding?"
-        // button_2.innerHTML = "Could share them with me?"
-
         dialogue_box.style.display = "none";
-        // button_1.style.display = "flex";
-        // button_2.style.display = "flex";
-        // name.style.display = "flex";
+        quit_buttons.style.display = "none";
+        instructions.style.display = "flex";
 
         is_in_dialogue = false;
         Demo.can_cam_move = true;
+
+
+        
+        hideDrawingArea();
+        is_quiz_visable(false);
+        pp_controller[0].style.display = "none";
+        pp_reset();
+        Demo.video.style.display = "none";
+        Demo.useSobel = false;
+        Demo.Dialogue_Meshes_rescale(51);
+        Demo.Dialogue_Meshes_rescale(41);
+        Demo.Dialogue_Meshes_rescale(61);
         
     }, 2000);
 }
@@ -912,10 +948,6 @@ function vinny_dialogue_progression(buttonNumber){
             break;
 
         case "PostProcess_7":
-            // button_1.onclick = null;
-            // button_2.onclick = null;
-            // button_3.onclick = null;
-            // button_4.onclick = null;
             d_text = "We can get our old friend Dithering too, actually, it is mainly used as a post process effect.";
             button_2.innerHTML = "->";
             button_2.onclick = function() {Demo.useColor = true; }
@@ -1009,7 +1041,7 @@ function vinny_dialogue_progression(buttonNumber){
             break;
 
         case "Sobel_2":
-            Demo.Dialogue_Meshes_rescale(10);
+            Demo.Dialogue_Meshes_rescale(24);
             Demo.Dialogue_Meshes_rescale(40);
             Demo.useColor = false;
             Demo.useSobel = true;

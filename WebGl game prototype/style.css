@@ -26,6 +26,149 @@
     padding-top: 10%;
 }
 
+.instructions {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-95%, 50%);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding-top: 10%;
+    color: white;
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    pointer-events: none;
+}
+
+.wasd {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 10px;
+}
+.wasd img{
+    opacity: 0.7;
+}
+
+.pause {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 999;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: black;
+
+    
+
+    /* user-select: none; */
+}
+
+.pause_buttons {
+    width: 70%;
+    height: 70%;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    container-type: size;
+
+    gap: 10%;
+}
+
+.menu_button.game_name{
+    border: 3px solid black;
+}
+
+.menu_button {
+    width: 70%;
+    height: 18%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    border: 3px solid white;
+
+    background-color: rgba(0, 0, 0, 0);
+
+    color: white;
+
+    font-size: clamp(1rem, 4cqw, 4rem);
+    font-weight: bold;
+
+    box-sizing: border-box;
+}
+
+#about_section{
+    width: 70%;
+    height: 70%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    container-type: size;
+}
+
+#author_inf{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    border: 3px solid white;
+    font-size: clamp(1rem, 2cqw, 2rem);
+    padding: 3%;
+}
+
+#line_one{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    text-align: center;
+    color: white;
+    gap: 5%;
+}
+
+#how_to_play, #model_ideas{
+    width: 50%;
+    /* min-height: 50%; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    text-align: left;
+    color: white;
+    border: 3px solid white;
+    font-size: clamp(1rem, 1.5cqw, 1.5rem);
+    padding: 3%;
+    margin-top: 3%;
+    /* margin-bottom: 3%; */
+}
+
 #dither_image {
     position: absolute;
     display: none;
@@ -70,9 +213,50 @@
     padding: 3%;
     gap: 4%; 
 
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#quit_buttons{
+    position: absolute;
+    display: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    width: 10%;
+    height: 10%;
+    max-width: 50px;
+    max-height: 50px;
+    bottom: 90%;
+    left: 10%;
+    /* transform: translateX(-50%); */
+
+    background-color: rgba(162, 22, 22, 0);
+
+    /* padding: 3%; */
+    gap: 30%; 
+    color: white;
+
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+#home_btn, #skip{
+    /* width: 50%;
+    min-height: 50%; */
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    border: 3px solid white;
+    padding: 5%;
+    /* font-size: clamp(1rem, 1.5cqw, 1.5rem); */
 }
 
 
@@ -538,5 +722,37 @@
 .iris.start {
     --iris-radius: -50%;
     --iris-gradient-length: 0px;
+}
+
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* Add dots under the hoverable text */
+  cursor: pointer;
+}
+
+/* Tooltip text */
+.tooltiptext {
+  visibility: hidden;
+  width: 130px;
+  background-color: black;
+  border: 3px solid white;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+
+  top: 130%;
+  left: 65%;
+  margin-left: -65px;
+}
+
+/* Show the tooltip text on hover */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 
